@@ -5,4 +5,4 @@ frontend/.eslintrc
 frontend/.prettierrc
 frontend/package-lock.json
 frontend/src/styles/**/*.scss
-frontend/src/styles/**/*.map
+frontend/src/styles/**/*.css.map

@@ -1,0 +1,9 @@
+.loaderDiv {
+  background-color: var(--page-background);
+  width: 100dvw;
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+}/*# sourceMappingURL=authController.module.css.map */

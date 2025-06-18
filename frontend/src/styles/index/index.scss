@@ -1,0 +1,80 @@
+@import '../_constants.scss';
+@import '../themes/themes.scss';
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  border: none;
+  -webkit-tap-highlight-color: transparent;
+  outline: none;
+}
+
+html {
+  font-size: 1em;
+
+  @media (max-width: 768px) {
+    font-size: 0.75em;
+  }
+
+  @media (min-width: 2560px) {
+    font-size: 1.5em;
+  }
+
+  @media (min-width: 3860px) {
+    font-size: 2em;
+  }
+}
+
+p,
+h1,
+span {
+  color: var(--text-color);
+  font-family: 'Roboto';
+}
+
+p,
+span {
+  font-size: $font-size-medium;
+}
+
+h1 {
+  font-size: $font-size-large;
+}
+
+img {
+  object-fit: contain;
+  user-select: none;
+}
+
+button {
+  user-select: none;
+  cursor: pointer;
+}
+
+a {
+  color: var(--href-text-color);
+}
+
+.Toastify__toast {
+  font-size: var(--font-small);
+  font-family: 'Roboto';
+  color: var(--text-color);
+
+  margin-bottom: 2dvh;
+  box-shadow: none;
+  width: fit-content;
+
+  background-color: var(--toastify-background-color);
+  border-radius: 1rem;
+}
+
+.Toastify__close-button {
+  color: var(--toastify-button);
+  opacity: revert;
+  transition: color 0.1s linear;
+}
+
+.Toastify__close-button:hover {
+  color: var(--toastify-button-hover);
+}

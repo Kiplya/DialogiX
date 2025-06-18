@@ -1,0 +1,32 @@
+{
+  "main": "index.ts",
+  "scripts": {
+    "start": "ts-node -r tsconfig-paths/register index.ts",
+    "migrate": "npx prisma migrate dev --name"
+  },
+  "dependencies": {
+    "@prisma/client": "latest",
+    "@types/bcrypt": "latest",
+    "@types/cookie-parser": "latest",
+    "@types/cors": "latest",
+    "@types/express": "latest",
+    "@types/jsonwebtoken": "latest",
+    "@types/node": "latest",
+    "@types/pg": "latest",
+    "@types/validator": "latest",
+    "axios": "latest",
+    "bcryptjs": "latest",
+    "cookie-parser": "latest",
+    "cors": "latest",
+    "crypto": "latest",
+    "dotenv": "latest",
+    "express": "latest",
+    "jsonwebtoken": "latest",
+    "pg": "latest",
+    "prisma": "latest",
+    "ts-node": "latest",
+    "tsconfig-paths": "latest",
+    "typescript": "latest",
+    "validator": "latest"
+  }
+}

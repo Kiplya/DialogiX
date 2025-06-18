@@ -1,0 +1,94 @@
+services:
+  db:
+    image: postgres:alpine
+    container_name: db
+    restart: unless-stopped
+
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: db
+    ports:
+      - "5432:5432"
+
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    networks:
+      - dialogix
+
+  backend:
+    build: ./backend
+    container_name: backend
+
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+
+    environment:
+      MODE: production
+      BACKEND_PORT: 8000
+
+      CRYPT_KEY: ${CRYPT_KEY}
+      CRYPT_IV: ${CRYPT_IV}
+
+      ACCESS_TOKEN_SECRET: ${ACCESS_TOKEN_SECRET}
+      REFRESH_TOKEN_SECRET: ${REFRESH_TOKEN_SECRET}
+      ACCESS_TOKEN_EXPIRES_IN: ${ACCESS_TOKEN_EXPIRES_IN}
+      REFRESH_TOKEN_EXPIRES_IN: ${REFRESH_TOKEN_EXPIRES_IN}
+
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USER: ${POSTGRES_USER}
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
+      DB_NAME: db
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/db?schema=public
+
+    volumes:
+      - ./shared:/app/shared:ro
+    command: sh -c "npx prisma migrate deploy && npx prisma generate && npm run start"
+    networks:
+      - dialogix
+
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+      args:
+        SHARED_PATH: "./shared"
+        PORT: 3000
+        VITE_API_URL: "/api"
+    container_name: frontend
+
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+
+    volumes:
+      - ./shared:/app/shared:ro
+      - frontend_build:/frontend_build
+    networks:
+      - dialogix
+
+  nginx:
+    image: nginx:alpine
+    container_name: nginx
+
+    depends_on:
+      - frontend
+    ports:
+      - "80:80"
+
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - frontend_build:/usr/share/nginx/html:ro
+    networks:
+      - dialogix
+
+volumes:
+  db_data:
+  frontend_build:
+
+networks:
+  dialogix:

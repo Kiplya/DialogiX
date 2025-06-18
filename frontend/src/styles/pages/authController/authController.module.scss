@@ -1,0 +1,7 @@
+@import '../../mixins.scss';
+
+.loaderDiv {
+  @include pageLayout;
+  @include flexCenterColumn;
+  justify-content: center;
+}

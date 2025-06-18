@@ -1,0 +1,23 @@
+@import '../../constants.scss';
+
+button {
+  font-size: $font-size-smaller;
+  font-family: 'Roboto';
+  color: var(--text-color);
+
+  padding: 0.5rem;
+  background-color: var(--button-background-color);
+  border-radius: 1rem;
+  transition: transform 0.25s ease;
+
+  &:disabled {
+    opacity: 0.75;
+    cursor: default;
+  }
+
+  @media (hover: hover) {
+    &:not(:disabled):hover {
+      transform: scale(1.1);
+    }
+  }
+}

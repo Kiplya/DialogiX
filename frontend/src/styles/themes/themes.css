@@ -1,0 +1,29 @@
+:root {
+  --text-color: rgb(245, 245, 245);
+  --href-text-color: rgb(60, 60, 165);
+  --page-background: rgb(30, 30, 30);
+  --input-placeholder-color: rgb(200, 200, 200);
+  --input-background-color: rgb(60, 60, 60);
+  --input-border-color: rgb(113, 168, 236);
+  --auth-form-border-color: var(--input-border-color);
+  --button-background-color: var(--input-background-color);
+  --loader-color: var(--input-border-color);
+  --toastify-button: rgb(90, 90, 90);
+  --toastify-button-hover: rgb(120, 120, 120);
+  --toastify-background-color: rgb(60, 60, 60);
+}
+
+.light-theme {
+  --text-color: rgb(10, 10, 10);
+  --href-text-color: rgb(35, 35, 195);
+  --page-background: rgb(245, 245, 245);
+  --input-placeholder-color: rgb(100, 100, 100);
+  --input-background-color: rgb(220, 220, 220);
+  --input-border-color: rgb(113, 168, 236);
+  --auth-form-border-color: var(--input-border-color);
+  --button-background-color: var(--input-background-color);
+  --loader-color: var(--input-border-color);
+  --toastify-button: rgb(90, 90, 90);
+  --toastify-button-hover: rgb(120, 120, 120);
+  --toastify-background-color: rgb(220, 220, 220);
+}/*# sourceMappingURL=themes.css.map */

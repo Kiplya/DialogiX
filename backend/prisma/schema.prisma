@@ -18,13 +18,41 @@ model token {
 }
 
 model user {
+  id                String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  username          String        @unique
+  email             String        @unique
+  password          String        
+
+  registredAt       DateTime      @default(now()) @db.Timestamptz(0)
+  isAdmin           Boolean       @default(false)
+
+  tokens            token[]
+  chatParticipant   chatParticipant[]
+}
+
+model chatParticipant {
+  chatId          String       @db.Uuid
+  userId          String       @db.Uuid
+
+  chat            chat         @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  user            user         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([chatId, userId])
+}
+
+model chat {
+  id                String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  
+  messages          message[]
+  chatParticipants  chatParticipant[]    
+}
+
+model message {
   id            String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  username      String        @unique
-  email         String        @unique
-  password      String        
+  text          String        @db.Text
+  createdAt     DateTime      @default(now()) @db.Timestamptz(0)
+  userId        String        @db.Uuid
 
-  registredAt   DateTime      @default(now()) @db.Timestamptz(0)
-  isAdmin       Boolean       @default(false)
-
-  tokens        token[]
+  chatId        String        @db.Uuid
+  chat          chat          @relation(fields: [chatId], references: [id], onDelete: Cascade)
 }

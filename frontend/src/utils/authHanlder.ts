@@ -1,7 +1,7 @@
 import { LoginRes } from '@shared/index'
 
 import { AppDispatch } from '../store'
-import { setIsAuth, setIsAdmin } from '../store/reducers/AuthSlice'
+import { setIsAuth, setIsAdmin } from '../store/reducers/authSlice'
 
 export const handleAuthSuccess = (data: LoginRes, dispatch: AppDispatch) => {
   localStorage.setItem('accessToken', data.accessToken)

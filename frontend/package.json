@@ -24,6 +24,7 @@
     "react-router": "latest",
     "react-toastify": "latest",
     "sass": "latest",
+    "socket.io-client": "latest",
     "typescript": "latest",
     "validator": "latest",
     "vite": "latest"

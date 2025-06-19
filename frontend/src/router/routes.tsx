@@ -1,7 +1,7 @@
 import { ReactElement } from 'react'
 
 import AuthorizationPage from '../pages/AuthorizationPage'
-import MessagesPage from '../pages/MessagesPage'
+import MessagesLayout from '../pages/MessagesLayout'
 import RegistrationPage from '../pages/RegistrationPage'
 
 type AppRoute = {
@@ -15,6 +15,6 @@ export const publicRoutes: AppRoute[] = [
   { path: '/registration', element: <RegistrationPage /> },
 ]
 
-export const privateRoutes: AppRoute[] = [{ path: '/messages', element: <MessagesPage /> }]
+export const privateRoutes: AppRoute[] = [{ path: '/messages', element: <MessagesLayout /> }]
 
 export const adminRoutes: AppRoute[] = []

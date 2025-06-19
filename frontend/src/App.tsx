@@ -4,9 +4,7 @@ import { ToastContainer } from 'react-toastify'
 
 import AuthController from './components/AuthController'
 import AppRouter from './router/AppRouter'
-import { setupStore } from './store/index'
-
-const store = setupStore()
+import { store } from './store/index'
 
 const App: FC = () => (
   <Provider store={store}>

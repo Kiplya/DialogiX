@@ -1,7 +1,7 @@
 import { ResStatus } from '@shared/index'
 import { FC, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Link, useNavigate } from 'react-router'
+import { Link } from 'react-router'
 import { toast } from 'react-toastify'
 import validator from 'validator'
 
@@ -13,7 +13,6 @@ import { isErrorMessage, isErrorWithStatus } from '../utils/assertions'
 
 const AuthorizationPage: FC = () => {
   const { t } = useTranslation('auth')
-  const navigate = useNavigate()
 
   const [isValidEmail, setIsValidEmail] = useState(true)
   const [isValidPassword, setIsValidPassword] = useState(true)
@@ -21,15 +20,10 @@ const AuthorizationPage: FC = () => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
 
-  const [loginMutation, { isSuccess, isLoading, isError, error }] = useLoginMutation()
+  const [loginMutation, { isLoading, isError, error }] = useLoginMutation()
 
   const isFormFilled = email && password ? true : false
   const isButtonNotDisabled = isFormFilled && isValidEmail && isValidPassword && !isLoading
-
-  useEffect(() => {
-    if (!isSuccess) return
-    navigate('/messages')
-  }, [isSuccess, navigate])
 
   useEffect(() => {
     if (!isError) return

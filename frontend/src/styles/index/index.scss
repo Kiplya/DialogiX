@@ -56,6 +56,10 @@ a {
   color: var(--href-text-color);
 }
 
+ul {
+  list-style: none;
+}
+
 .Toastify__toast {
   font-size: var(--font-small);
   font-family: 'Roboto';

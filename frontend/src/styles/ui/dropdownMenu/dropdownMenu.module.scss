@@ -1,0 +1,37 @@
+.dropdownDiv {
+  position: relative;
+
+  & > img {
+    cursor: pointer;
+    aspect-ratio: 1 / 1;
+    height: 100%;
+  }
+
+  & > span {
+    cursor: pointer;
+    user-select: none;
+  }
+
+  & > ul {
+    position: absolute;
+    top: 100%;
+    left: 0;
+
+    & > li {
+      cursor: pointer;
+      background-color: var(--button-background-color);
+      padding: 0.5rem;
+      border: 0.05rem solid transparent;
+
+      & > span {
+        white-space: nowrap;
+      }
+
+      @media (hover: hover) {
+        &:hover {
+          border-color: var(--input-border-color);
+        }
+      }
+    }
+  }
+}

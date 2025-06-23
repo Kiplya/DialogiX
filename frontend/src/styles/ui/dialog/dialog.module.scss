@@ -1,12 +1,5 @@
 .layoutDiv {
-  background:
-    var(--dialog-background-img),
-    radial-gradient(
-      circle at left,
-      rgba(var(--dialog-background-pattern-color), 0.75),
-      rgba(var(--dialog-background-pattern-color), 1)
-    );
-
+  background-color: var(--page-background-color);
   height: 100dvh;
   flex: 1;
 

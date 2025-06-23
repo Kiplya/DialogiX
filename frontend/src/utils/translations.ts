@@ -12,10 +12,17 @@ i18n.use(initReactI18next).init({
         nonSelectedDialogText: 'Select a conversation partner and start chatting!',
         searchPlaceholderText: 'Search by username',
         notFounedUsersText: 'No users found',
+        profileText: 'Profile',
+        currentThemeText: 'Switch theme',
+        currentLanguageText: 'Change language',
+        logoutText: 'Log out',
+        logoutConfirmText: 'Are you sure you want to log out?',
       },
 
       common: {
         blockerText: 'You have unsaved changes. Leave the page?',
+        acceptText: 'Yes',
+        declineText: 'No',
       },
 
       reg: {
@@ -36,7 +43,7 @@ i18n.use(initReactI18next).init({
       auth: {
         authText: 'Sign in',
         passwordText: 'Password',
-        loginButtonText: 'Login',
+        loginButtonText: 'Log in',
         accountText: 'No account?',
         hrefText: 'Create one!',
         invalidEmailText: 'Invalid Email',
@@ -49,10 +56,17 @@ i18n.use(initReactI18next).init({
         nonSelectedDialogText: 'Выбирите собеседника и начните общаться!',
         searchPlaceholderText: 'Поиск по никнейму',
         notFounedUsersText: 'Пользователи не найдены',
+        profileText: 'Профиль',
+        currentThemeText: 'Сменить тему',
+        currentLanguageText: 'Сменить язык',
+        logoutText: 'Выйти',
+        logoutConfirmText: 'Вы действительно хотите выйти?',
       },
 
       common: {
         blockerText: 'У вас есть несохранённые изменения. Покинуть страницу?',
+        acceptText: 'Да',
+        declineText: 'Нет',
       },
 
       reg: {

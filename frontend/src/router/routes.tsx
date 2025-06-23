@@ -3,6 +3,7 @@ import { ReactElement } from 'react'
 import Dialog from '../components/ui/Dialog'
 import MessagesList from '../components/ui/MessagesList'
 import AuthorizationPage from '../pages/AuthorizationPage'
+import ProfilePage from '../pages/ProfilePage'
 import RegistrationPage from '../pages/RegistrationPage'
 
 type AppRoute = {
@@ -27,6 +28,7 @@ export const privateRoutes: AppRoute[] = [
       },
     ],
   },
+  { path: '/profile', element: <ProfilePage /> },
 ]
 
 export const adminRoutes: AppRoute[] = []

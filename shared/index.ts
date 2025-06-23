@@ -45,3 +45,8 @@ export type JwtPayload = {
   userAgent: string;
   isAdmin: boolean;
 };
+
+export type GetManyUsersRes = {
+  users: { id: string; username: string; avatar: string | null }[];
+  hasMore: boolean;
+};

@@ -3,20 +3,16 @@ import { socket } from './index'
 import { userApi } from '../api/userApi'
 import { store } from '../store/index'
 
-socket.on('disconnect', () => {
+socket.on('unauthorized', (data: { controller: string; args?: any[] }) => {
   store
     .dispatch(userApi.endpoints.refreshTokens.initiate())
     .unwrap()
     .then(() => {
-      socketConnect()
-      return
+      socketControllers[data.controller](data.args)
     })
     .catch(() => {
       console.error('Socket connection closed')
     })
 })
 
-export const socketConnect = () => {
-  socket.auth = { accessToken: localStorage.getItem('accessToken') }
-  socket.connect()
-}
+export const socketControllers: Record<string, (args?: any[], cb?: Function) => void> = {}

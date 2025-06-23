@@ -89,7 +89,7 @@ const AuthorizationPage: FC = () => {
                   const value = event.currentTarget.value.trim()
 
                   setPassword(value)
-                  setIsValidPassword(value.length > 7 || !value)
+                  setIsValidPassword((value.length >= 8 && value.length <= 32) || !value)
                 }}
               />
 

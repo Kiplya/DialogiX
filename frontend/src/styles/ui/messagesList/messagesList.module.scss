@@ -1,0 +1,53 @@
+@import '../../mixins.scss';
+
+.pageDiv {
+  display: flex;
+
+  & > .layoutDiv {
+    display: flex;
+    flex-direction: column;
+    background-color: var(--page-background-color);
+
+    height: 100dvh;
+    width: 20dvw;
+    min-width: 20rem;
+
+    @media (max-width: #{2 * 20rem}) {
+      width: 100dvw;
+    }
+
+    & > header {
+      display: flex;
+      gap: 1rem;
+      margin: 0 1rem;
+      align-items: center;
+
+      & > span {
+        display: inline-block;
+        font-size: 3rem;
+
+        cursor: pointer;
+        user-select: none;
+      }
+
+      & > input {
+        height: 2rem;
+      }
+    }
+
+    & > main {
+      @include flexCenterColumn;
+
+      & .loaderDiv {
+        padding-top: 1rem;
+        width: 3rem;
+      }
+
+      & .notFounded {
+        padding-top: 1rem;
+      }
+
+      border-top: var(--messages-list-border-color) 0.1rem solid;
+    }
+  }
+}

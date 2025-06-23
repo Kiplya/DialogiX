@@ -20,6 +20,7 @@
     "react": "latest",
     "react-dom": "latest",
     "react-i18next": "latest",
+    "react-intersection-observer": "latest",
     "react-redux": "latest",
     "react-router": "latest",
     "react-toastify": "latest",

@@ -8,6 +8,12 @@ i18n.use(initReactI18next).init({
 
   resources: {
     en: {
+      msg: {
+        nonSelectedDialogText: 'Select a conversation partner and start chatting!',
+        searchPlaceholderText: 'Search by username',
+        notFounedUsersText: 'No users found',
+      },
+
       common: {
         blockerText: 'You have unsaved changes. Leave the page?',
       },
@@ -19,9 +25,9 @@ i18n.use(initReactI18next).init({
         regButtonText: 'Register',
         accountText: 'Already have an account?',
         hrefText: 'Sign in!',
-        invalidPasswordText: 'Short password',
+        invalidPasswordText: 'Invalid password',
         invalidEmailText: 'Invalid Email',
-        invalidUsernameText: 'Short username',
+        invalidUsernameText: 'Invalid username',
         emailExistText: 'Email is already taken',
         usernameExistText: 'Username is already taken',
         successRegText: 'Successful registration',
@@ -34,11 +40,17 @@ i18n.use(initReactI18next).init({
         accountText: 'No account?',
         hrefText: 'Create one!',
         invalidEmailText: 'Invalid Email',
-        invalidPasswordText: 'Short password',
+        invalidPasswordText: 'Invalid password',
         failureLoginText: 'Invalid credentials',
       },
     },
     ru: {
+      msg: {
+        nonSelectedDialogText: 'Выбирите собеседника и начните общаться!',
+        searchPlaceholderText: 'Поиск по никнейму',
+        notFounedUsersText: 'Пользователи не найдены',
+      },
+
       common: {
         blockerText: 'У вас есть несохранённые изменения. Покинуть страницу?',
       },
@@ -50,9 +62,9 @@ i18n.use(initReactI18next).init({
         regButtonText: 'Зарегистрироваться',
         accountText: 'Есть аккаунт?',
         hrefText: 'Войдите!',
-        invalidPasswordText: 'Короткий пароль',
+        invalidPasswordText: 'Недопустимый пароль',
         invalidEmailText: 'Неверная почта',
-        invalidUsernameText: 'Короткий никнейм',
+        invalidUsernameText: 'Недопустимый никнейм',
         emailExistText: 'Почта занята',
         usernameExistText: 'Никнейм занят',
         successRegText: 'Успешная регистрация',
@@ -65,7 +77,7 @@ i18n.use(initReactI18next).init({
         accountText: 'Нет аккаунта?',
         hrefText: 'Создайте!',
         invalidEmailText: 'Неверная почта',
-        invalidPasswordText: 'Короткий пароль',
+        invalidPasswordText: 'Недопустимый пароль',
         failureLoginText: 'Неверные данные',
       },
     },

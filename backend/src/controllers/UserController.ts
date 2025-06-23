@@ -5,6 +5,7 @@ import {
   LoginReq,
   LoginRes,
   JwtPayload,
+  GetManyUsersRes,
 } from "@shared/index";
 import { Request, Response, NextFunction } from "express";
 import UserService from "../services/UserService";
@@ -190,6 +191,32 @@ export default class UserController {
       }
 
       res.sendStatus(ResStatus.NO_CONTENT);
+    } catch (err) {
+      resServerError(res, err);
+    }
+  }
+
+  static async getManyByUsername(
+    req: Request & { user?: JwtPayload },
+    res: Response<GetManyUsersRes | BaseRes>
+  ) {
+    try {
+      const { page, limit, username } = req.query;
+      if (!page || !limit || !username) {
+        res
+          .status(ResStatus.INVALID_CREDENTIALS)
+          .json({ message: "Invalid Credentials" });
+        return;
+      }
+
+      const resultUsers = await UserService.getManyByUsername(
+        username.toString(),
+        req.user!.userId,
+        parseInt(page.toString()),
+        parseInt(limit.toString())
+      );
+
+      res.status(ResStatus.OK).json(resultUsers);
     } catch (err) {
       resServerError(res, err);
     }

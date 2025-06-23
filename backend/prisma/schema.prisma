@@ -25,6 +25,7 @@ model user {
 
   registredAt       DateTime      @default(now()) @db.Timestamptz(0)
   isAdmin           Boolean       @default(false)
+  avatar            String?       @unique @db.Text
 
   tokens            token[]
   chatParticipant   chatParticipant[]

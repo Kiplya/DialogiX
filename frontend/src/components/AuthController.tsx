@@ -6,7 +6,7 @@ import { useRefreshTokensMutation } from '../api/userApi'
 import cl from '../styles/pages/authController/authController.module.css'
 
 const AuthController: FC<PropsWithChildren> = ({ children }) => {
-  const [refreshTokensMutation, { isLoading }] = useRefreshTokensMutation()
+  const [refreshTokensMutation, { isLoading, isUninitialized }] = useRefreshTokensMutation()
 
   useEffect(() => {
     refreshTokensMutation()
@@ -24,7 +24,7 @@ const AuthController: FC<PropsWithChildren> = ({ children }) => {
 
   return (
     <>
-      {isLoading ? (
+      {isLoading || isUninitialized ? (
         <div className={cl.loaderDiv}>
           <Loader />
         </div>

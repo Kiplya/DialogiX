@@ -122,7 +122,7 @@ const RegistrationPage: FC = () => {
                   setIsUsernameExist(false)
 
                   setUsername(value)
-                  setIsValidUsername(value.length > 5 || !value)
+                  setIsValidUsername((value.length >= 6 && value.length <= 16) || !value)
                 }}
               />
 
@@ -140,7 +140,7 @@ const RegistrationPage: FC = () => {
                   const value = event.currentTarget.value.trim()
 
                   setPassword(value)
-                  setIsValidPassword(value.length > 7 || !value)
+                  setIsValidPassword((value.length >= 8 && value.length <= 32) || !value)
                 }}
               />
 

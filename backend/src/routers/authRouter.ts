@@ -5,5 +5,6 @@ const authRouter = Router();
 
 authRouter.use(UserController.authMiddleware);
 authRouter.post("/logout", UserController.logout);
+authRouter.get("/getManyUsersByUsername", UserController.getManyByUsername);
 
 export default authRouter;

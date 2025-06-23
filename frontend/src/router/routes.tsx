@@ -1,7 +1,8 @@
 import { ReactElement } from 'react'
 
+import Dialog from '../components/ui/Dialog'
+import MessagesList from '../components/ui/MessagesList'
 import AuthorizationPage from '../pages/AuthorizationPage'
-import MessagesLayout from '../pages/MessagesLayout'
 import RegistrationPage from '../pages/RegistrationPage'
 
 type AppRoute = {
@@ -15,6 +16,17 @@ export const publicRoutes: AppRoute[] = [
   { path: '/registration', element: <RegistrationPage /> },
 ]
 
-export const privateRoutes: AppRoute[] = [{ path: '/messages', element: <MessagesLayout /> }]
+export const privateRoutes: AppRoute[] = [
+  {
+    path: '/messages',
+    element: <MessagesList />,
+    children: [
+      {
+        path: ':username',
+        element: <Dialog />,
+      },
+    ],
+  },
+]
 
 export const adminRoutes: AppRoute[] = []

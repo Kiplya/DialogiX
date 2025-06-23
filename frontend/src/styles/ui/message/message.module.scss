@@ -1,0 +1,15 @@
+.message {
+  position: relative;
+  display: inline-block;
+
+  padding: 1rem;
+  border-radius: 2rem;
+  background-color: var(--message-recepient-color);
+
+  &.previewMessage {
+    text-align: center;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
+}

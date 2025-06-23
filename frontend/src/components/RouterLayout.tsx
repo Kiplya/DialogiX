@@ -1,8 +1,6 @@
 import { FC } from 'react'
 import { Outlet } from 'react-router'
 
-const RouterLayout: FC = () => {
-  return <Outlet />
-}
+const RouterLayout: FC = () => <Outlet />
 
 export default RouterLayout

@@ -64,4 +64,8 @@ export default class TokenService {
   static async findByRefreshTokenId(refreshTokenId: string) {
     return await prisma.token.findUnique({ where: { id: refreshTokenId } });
   }
+
+  static async deleteAllByUserId(userId: string) {
+    await prisma.token.deleteMany({ where: { userId } });
+  }
 }

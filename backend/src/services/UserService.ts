@@ -3,7 +3,17 @@ import { prisma } from "../utils/handlers";
 
 export default class UserService {
   static async getById(id: string) {
-    return await prisma.user.findUnique({ where: { id } });
+    return await prisma.user.findUnique({
+      where: { id },
+      select: {
+        id: true,
+        email: true,
+        username: true,
+        registredAt: true,
+        isAdmin: true,
+        avatar: true,
+      },
+    });
   }
 
   static async getByEmail(email: string) {
@@ -71,5 +81,23 @@ export default class UserService {
     }
 
     return await prisma.user.create({ data });
+  }
+
+  static async deleteById(id: string) {
+    await prisma.user.delete({ where: { id } });
+  }
+
+  static async updatePassword(id: string, newPassword: string) {
+    await prisma.user.update({
+      where: { id },
+      data: { password: newPassword },
+    });
+  }
+
+  static async getPasswordById(id: string) {
+    return await prisma.user.findUnique({
+      where: { id },
+      select: { password: true },
+    });
   }
 }

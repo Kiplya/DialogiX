@@ -1,6 +1,6 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
 
-import { BaseRes, LoginReq, LoginRes, RegistrationReq } from '@shared/index'
+import { BaseRes, GetSelfUserRes, LoginReq, LoginRes, PasswordValidationReq, RegistrationReq } from '@shared/index'
 
 import { handleAuthFailure, handleAuthSuccess } from '../utils/authHanlder'
 import { baseQuery } from '../utils/fetchHandlers'
@@ -85,10 +85,52 @@ export const userApi = createApi({
         },
       }),
     }),
+
+    getSelf: builder.query<GetSelfUserRes, void>({
+      query: () => ({
+        url: '/auth/getSelfById',
+        method: 'GET',
+      }),
+    }),
+
+    deleteAllTokens: builder.mutation<BaseRes, void>({
+      query: () => ({
+        url: '/auth/deleteAllTokensByUserId',
+        method: 'DELETE',
+      }),
+    }),
+
+    deleteSelfUser: builder.mutation<BaseRes, void>({
+      query: () => ({
+        url: '/auth/deleteSelfUserById',
+        method: 'DELETE',
+      }),
+    }),
+
+    updatePassword: builder.mutation<BaseRes, PasswordValidationReq>({
+      query: (credentials) => ({
+        url: '/auth/updatePassword',
+        method: 'PUT',
+        body: credentials,
+      }),
+    }),
+
+    comparePassword: builder.mutation<BaseRes, PasswordValidationReq>({
+      query: (credentials) => ({
+        url: '/auth/comparePassword',
+        method: 'POST',
+        body: credentials,
+      }),
+    }),
   }),
 })
 
 export const {
+  useDeleteAllTokensMutation,
+  useDeleteSelfUserMutation,
+  useUpdatePasswordMutation,
+  useComparePasswordMutation,
+  useGetSelfQuery,
   useUsernameExistQuery,
   useEmailExistQuery,
   useRefreshTokensMutation,

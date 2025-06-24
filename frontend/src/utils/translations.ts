@@ -19,6 +19,25 @@ i18n.use(initReactI18next).init({
         logoutConfirmText: 'Are you sure you want to log out?',
       },
 
+      profile: {
+        profileText: 'User',
+        usernameText: 'Username',
+        registredAtText: 'Registred at',
+        change: 'Change',
+        roleText: 'Role',
+        adminRoleText: 'Admin',
+        userRoleText: 'User',
+        dangerZoneText: 'Danger zone',
+        changePasswordText: 'Change password',
+        sessionsLogoutText: 'Log out of all devices (including this one)',
+        deleteAccountText: 'Delete account (forever)',
+        inputPasswordText: 'Input current password',
+        successPasswordCompareText: 'Correct password',
+        sessionsLogoutConfirmText: 'Are you sure you want to log out from all devices (including this one)?',
+        deleteAccountConfirmText: 'Are you sure you want to delete your account FOREVER?',
+        changePasswordPlaceholderText: 'Input new password',
+      },
+
       common: {
         blockerText: 'You have unsaved changes. Leave the page?',
         acceptText: 'Yes',
@@ -67,6 +86,25 @@ i18n.use(initReactI18next).init({
         blockerText: 'У вас есть несохранённые изменения. Покинуть страницу?',
         acceptText: 'Да',
         declineText: 'Нет',
+      },
+
+      profile: {
+        profileText: 'Пользователь',
+        usernameText: 'Никнейм',
+        registredAtText: 'Зарегистрирован',
+        change: 'Изменить',
+        roleText: 'Роль',
+        adminRoleText: 'Администратор',
+        userRoleText: 'Пользователь',
+        dangerZoneText: 'Критическая зона',
+        changePasswordText: 'Изменить пароль',
+        sessionsLogoutText: 'Выйти со всех устройств (включая это)',
+        deleteAccountText: 'Удалить аккаунт (навсегда)',
+        inputPasswordText: 'Введите текущий пароль',
+        successPasswordCompareText: 'Корректный пароль',
+        sessionsLogoutConfirmText: 'Вы действительно хотите выйти со всех устройств (включая это)?',
+        deleteAccountConfirmText: 'Вы действительно хотите удалить аккаунт НАВСЕГДА?',
+        changePasswordPlaceholderText: 'Введите новый пароль',
       },
 
       reg: {

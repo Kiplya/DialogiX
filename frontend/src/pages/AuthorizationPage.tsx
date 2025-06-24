@@ -64,8 +64,7 @@ const AuthorizationPage: FC = () => {
                 placeholder='Email'
                 value={email}
                 onChange={(event) => {
-                  const value = event.currentTarget.value.trim()
-
+                  const value = event.currentTarget.value.replace(/\s+/g, '')
                   setEmail(value)
                   setIsValidEmail(validator.isEmail(value) || !value)
                 }}
@@ -80,7 +79,7 @@ const AuthorizationPage: FC = () => {
                 placeholder={t('passwordText')}
                 value={password}
                 onChange={(event) => {
-                  const value = event.currentTarget.value.trim()
+                  const value = event.currentTarget.value.replace(/\s+/g, '')
 
                   setPassword(value)
                   setIsValidPassword((value.length >= 8 && value.length <= 32) || !value)

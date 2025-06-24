@@ -44,9 +44,9 @@ export const usernameValidation = (
     req.body.username.trim().length < 6 ||
     req.body.username.trim().length > 16
   ) {
-    res
-      .status(ResStatus.INVALID_CREDENTIALS)
-      .json({ message: "Username length must be longer than 5" });
+    res.status(ResStatus.INVALID_CREDENTIALS).json({
+      message: "Username length must be longer than 5 and shorter than 17",
+    });
     return false;
   }
 
@@ -77,7 +77,9 @@ export const passwordValidation = (
   ) {
     res
       .status(ResStatus.INVALID_CREDENTIALS)
-      .json({ message: "Password length must be longer than 7" });
+      .json({
+        message: "Password length must be longer than 7 and shorter than 33",
+      });
     return false;
   }
 

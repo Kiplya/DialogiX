@@ -5,12 +5,12 @@ import cl from '../../styles/ui/modal/modal.module.css'
 
 interface ModalProps {
   isOpen: boolean
-  onClose: () => void
-  onConfirm: () => void
-  modalText: string
+  onClose: Function
+  onConfirm: Function
+  modalData: string
 }
 
-const Modal: FC<ModalProps> = ({ isOpen, onClose, modalText, onConfirm }) => {
+const Modal: FC<ModalProps> = ({ isOpen, onClose, modalData, onConfirm }) => {
   const { t } = useTranslation('common')
 
   if (!isOpen) {
@@ -18,12 +18,13 @@ const Modal: FC<ModalProps> = ({ isOpen, onClose, modalText, onConfirm }) => {
   }
 
   return (
-    <div className={cl.overlay} onClick={onClose}>
+    <div className={cl.overlay} onClick={() => onClose()}>
       <div onClick={(e) => e.stopPropagation()}>
-        <p>{modalText}</p>
+        <p>{modalData}</p>
+
         <div>
-          <button onClick={onConfirm}>{t('acceptText')}</button>
-          <button onClick={onClose}>{t('declineText')}</button>
+          <button onClick={() => onConfirm()}>{t('acceptText')}</button>
+          <button onClick={() => onClose()}>{t('declineText')}</button>
         </div>
       </div>
     </div>

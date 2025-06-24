@@ -16,6 +16,9 @@
   --toastify-button-hover-color: rgb(120, 120, 120);
   --toastify-background-color: rgb(60, 60, 60);
 
+  --danger-zone-color: rgb(120, 35, 35);
+  --danger-zone-button-background-color: rgba(120, 35, 35, 0.5);
+
   --messages-list-border-color: var(--toastify-button-hover-color);
   --dialog-container-hovered-background-color: rgb(60, 60, 60);
   --hamburger-button-color: var(--text-color);
@@ -40,6 +43,9 @@
   --toastify-button-color: rgb(90, 90, 90);
   --toastify-button-hover-color: rgb(120, 120, 120);
   --toastify-background-color: rgb(220, 220, 220);
+
+  --danger-zone-color: rgb(160, 30, 30);
+  --danger-zone-button-background-color: rgba(160, 30, 30, 0.5);
 
   --messages-list-border-color: var(--input-border-color);
   --dialog-container-hovered-background-color: rgb(215, 215, 215);

@@ -6,15 +6,22 @@ import {
   LoginRes,
   JwtPayload,
   GetManyUsersRes,
+  GetSelfUserRes,
+  PasswordValidationReq,
 } from "@shared/index";
 import { Request, Response, NextFunction } from "express";
 import UserService from "../services/UserService";
 import { resServerError } from "../utils";
-import { loginValidation, registrationValidation } from "../utils/user";
+import {
+  loginValidation,
+  passwordValidation,
+  registrationValidation,
+} from "../utils/user";
 import { hash } from "../utils/crypt";
 import bcrypt from "bcryptjs";
 import { verifyAccessToken, verifyRefreshToken } from "../utils/jwt";
 import TokenService from "../services/TokenService";
+import ChatService from "../services/ChatService";
 
 export default class UserController {
   static async registration(
@@ -217,6 +224,85 @@ export default class UserController {
       );
 
       res.status(ResStatus.OK).json(resultUsers);
+    } catch (err) {
+      resServerError(res, err);
+    }
+  }
+
+  static async getSelfById(
+    req: Request & { user?: JwtPayload },
+    res: Response<GetSelfUserRes | BaseRes>
+  ) {
+    try {
+      const user = await UserService.getById(req.user!.userId);
+      if (!user) {
+        throw new Error("No user found");
+      }
+
+      res.status(ResStatus.OK).json(user);
+    } catch (err) {
+      resServerError(res, err);
+    }
+  }
+
+  static async deleteSelfById(
+    req: Request & { user?: JwtPayload },
+    res: Response<BaseRes>
+  ) {
+    try {
+      await ChatService.deleteAllChatsByUserId(req.user!.userId);
+      await UserService.deleteById(req.user!.userId);
+
+      res.status(ResStatus.OK).json({ message: "Successful delete user" });
+    } catch (err) {
+      resServerError(res, err);
+    }
+  }
+
+  static async updatePassword(
+    req: Request<{}, {}, PasswordValidationReq> & { user?: JwtPayload },
+    res: Response<BaseRes>
+  ) {
+    try {
+      if (!passwordValidation(req, res)) {
+        return;
+      }
+
+      const hashedPassword = await hash(req.body.password);
+      await UserService.updatePassword(req.user!.userId, hashedPassword);
+      await TokenService.deleteAllByUserId(req.user!.userId);
+
+      res.status(ResStatus.OK).json({ message: "Password successful changed" });
+    } catch (err) {
+      resServerError(res, err);
+    }
+  }
+
+  static async comparePassword(
+    req: Request<{}, {}, PasswordValidationReq> & { user?: JwtPayload },
+    res: Response<BaseRes>
+  ) {
+    try {
+      const passwordEntity = await UserService.getPasswordById(
+        req.user!.userId
+      );
+      if (!passwordEntity) {
+        throw new Error("No password found");
+      }
+
+      const isPasswordMatch = await bcrypt.compare(
+        req.body.password,
+        passwordEntity.password
+      );
+
+      if (!isPasswordMatch) {
+        res
+          .status(ResStatus.INVALID_CREDENTIALS)
+          .json({ message: "Incorrect password" });
+        return;
+      }
+
+      res.status(ResStatus.OK).json({ message: "Correct password" });
     } catch (err) {
       resServerError(res, err);
     }

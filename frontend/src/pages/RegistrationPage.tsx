@@ -99,7 +99,7 @@ const RegistrationPage: FC = () => {
                 placeholder='Email'
                 value={email}
                 onChange={(event) => {
-                  const value = event.currentTarget.value.trim()
+                  const value = event.currentTarget.value.replace(/\s+/g, '')
                   setIsEmailExist(false)
 
                   setEmail(value)
@@ -118,7 +118,7 @@ const RegistrationPage: FC = () => {
                 placeholder={t('usernameText')}
                 value={username}
                 onChange={(event) => {
-                  const value = event.currentTarget.value.trim()
+                  const value = event.currentTarget.value.replace(/\s+/g, '')
                   setIsUsernameExist(false)
 
                   setUsername(value)
@@ -137,7 +137,7 @@ const RegistrationPage: FC = () => {
                 placeholder={t('passwordText')}
                 value={password}
                 onChange={(event) => {
-                  const value = event.currentTarget.value.trim()
+                  const value = event.currentTarget.value.replace(/\s+/g, '')
 
                   setPassword(value)
                   setIsValidPassword((value.length >= 8 && value.length <= 32) || !value)

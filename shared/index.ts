@@ -50,3 +50,12 @@ export type GetManyUsersRes = {
   users: { id: string; username: string; avatar: string | null }[];
   hasMore: boolean;
 };
+
+export type GetSelfUserRes = {
+  id: string;
+  email: string;
+  username: string;
+  registredAt: Date;
+  isAdmin: boolean;
+  avatar: string | null;
+};

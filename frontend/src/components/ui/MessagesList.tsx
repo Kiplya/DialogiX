@@ -119,7 +119,7 @@ const MessagesList: FC = () => {
               placeholder={t('searchPlaceholderText')}
               value={searchQuery}
               onChange={(event) => {
-                setSearchQuery(event.currentTarget.value.trim())
+                setSearchQuery(event.currentTarget.value.replace(/\s+/g, ''))
               }}
             />
           </header>
@@ -159,7 +159,7 @@ const MessagesList: FC = () => {
 
       <Modal
         isOpen={isShowModal}
-        modalText={t('logoutConfirmText')}
+        modalData={t('logoutConfirmText')}
         onClose={() => setIsShowModal(false)}
         onConfirm={() => logoutMutation()}
       />

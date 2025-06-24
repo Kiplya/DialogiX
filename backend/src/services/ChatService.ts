@@ -77,4 +77,19 @@ export default class ChatService {
       },
     });
   }
+
+  static async deleteAllChatsByUserId(userId: string) {
+    const chatsParticipant = await prisma.chatParticipant.findMany({
+      where: { userId },
+      select: { chatId: true },
+    });
+
+    const chatIds = chatsParticipant.map(
+      (chatParticipant) => chatParticipant.chatId
+    );
+
+    await prisma.chat.deleteMany({
+      where: { id: { in: chatIds } },
+    });
+  }
 }

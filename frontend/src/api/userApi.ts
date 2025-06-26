@@ -1,6 +1,15 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
 
-import { BaseRes, GetSelfUserRes, LoginReq, LoginRes, PasswordValidationReq, RegistrationReq } from '@shared/index'
+import {
+  BaseRes,
+  GetSelfUserRes,
+  LoginReq,
+  LoginRes,
+  PasswordValidationReq,
+  RegistrationReq,
+  UpadateUsernameReq,
+  UpdatePasswordReq,
+} from '@shared/index'
 
 import { handleAuthFailure, handleAuthSuccess } from '../utils/authHanlder'
 import { baseQuery } from '../utils/fetchHandlers'
@@ -93,21 +102,23 @@ export const userApi = createApi({
       }),
     }),
 
-    deleteAllTokens: builder.mutation<BaseRes, void>({
-      query: () => ({
+    deleteAllTokens: builder.mutation<BaseRes, PasswordValidationReq>({
+      query: (credentials) => ({
         url: '/auth/deleteAllTokensByUserId',
         method: 'DELETE',
+        body: credentials,
       }),
     }),
 
-    deleteSelfUser: builder.mutation<BaseRes, void>({
-      query: () => ({
+    deleteSelfUser: builder.mutation<BaseRes, PasswordValidationReq>({
+      query: (credentials) => ({
         url: '/auth/deleteSelfUserById',
         method: 'DELETE',
+        body: credentials,
       }),
     }),
 
-    updatePassword: builder.mutation<BaseRes, PasswordValidationReq>({
+    updatePassword: builder.mutation<BaseRes, UpdatePasswordReq>({
       query: (credentials) => ({
         url: '/auth/updatePassword',
         method: 'PUT',
@@ -122,10 +133,29 @@ export const userApi = createApi({
         body: credentials,
       }),
     }),
+
+    updateUsername: builder.mutation<BaseRes, UpadateUsernameReq>({
+      query: (credentials) => ({
+        url: '/auth/updateUsername',
+        method: 'PUT',
+        body: credentials,
+      }),
+    }),
+
+    uploadAvatar: builder.mutation<BaseRes, File>({
+      query: (file) => {
+        const formData = new FormData()
+        formData.append('avatar', file)
+
+        return { url: '/auth/uploadAvatar', method: 'POST', body: formData }
+      },
+    }),
   }),
 })
 
 export const {
+  useUploadAvatarMutation,
+  useUpdateUsernameMutation,
   useDeleteAllTokensMutation,
   useDeleteSelfUserMutation,
   useUpdatePasswordMutation,

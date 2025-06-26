@@ -15,6 +15,7 @@
 
     @media (max-width: #{2 * 20rem}) {
       width: 100dvw;
+      border-right: revert;
     }
 
     & > header {

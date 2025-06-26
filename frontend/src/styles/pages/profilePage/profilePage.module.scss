@@ -13,13 +13,18 @@
 .entityChangeDiv {
   @include flexCenterColumn;
   width: 100%;
+  gap: 1rem;
 
   & > input.invalidInput {
     border-color: rgb(150, 0, 0);
   }
 
+  & > p {
+    text-align: justify;
+    width: 16rem;
+  }
+
   & > div {
-    margin-top: 1rem;
     display: flex;
     gap: 1rem;
 

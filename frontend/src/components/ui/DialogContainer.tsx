@@ -4,10 +4,11 @@ import Avatar from './Avatar'
 
 import cl from '../../styles/ui/dialogContainer/dialogContainer.module.css'
 
-const DialogContainer: FC<{ userId: string; username: string; lastMessage?: string }> = ({
+const DialogContainer: FC<{ userId: string; username: string; lastMessage?: string; lastMessageTime?: Date }> = ({
   userId,
   username,
   lastMessage,
+  lastMessageTime,
 }) => (
   <div className={cl.dialogDiv} data-user-id={userId}>
     <div>

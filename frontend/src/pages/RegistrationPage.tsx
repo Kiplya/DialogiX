@@ -22,12 +22,12 @@ const RegistrationPage: FC = () => {
   const debouncedEmail = useDebounce(email, 500)
   const debouncedUsername = useDebounce(username, 500)
 
-  const { isError: isErrorUsername } = useUsernameExistQuery(debouncedUsername!, {
-    skip: !debouncedUsername || debouncedUsername.length < 6,
+  const { isError: isErrorUsername, isFetching: isFetchingUsername } = useUsernameExistQuery(debouncedUsername!, {
+    skip: !debouncedUsername || debouncedUsername.length < 6 || debouncedUsername.length > 16,
     refetchOnMountOrArgChange: true,
   })
 
-  const { isError: isErrorEmail } = useEmailExistQuery(debouncedEmail!, {
+  const { isError: isErrorEmail, isFetching: isFetchingEmail } = useEmailExistQuery(debouncedEmail!, {
     skip: !debouncedEmail || !validator.isEmail(debouncedEmail),
     refetchOnMountOrArgChange: true,
   })
@@ -49,6 +49,10 @@ const RegistrationPage: FC = () => {
     isValidPassword &&
     !isEmailExist &&
     !isUsernameExist &&
+    !isFetchingUsername &&
+    !isFetchingEmail &&
+    debouncedUsername === username &&
+    debouncedEmail === email &&
     !isLoading
 
   useEffect(() => {

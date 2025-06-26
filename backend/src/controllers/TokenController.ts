@@ -1,9 +1,16 @@
-import { BaseRes, ResStatus, LoginRes, JwtPayload } from "@shared/index";
+import {
+  BaseRes,
+  ResStatus,
+  LoginRes,
+  JwtPayload,
+  PasswordValidationReq,
+} from "@shared/index";
 import { Request, Response } from "express";
 import { verifyRefreshToken } from "../utils/jwt";
 import TokenService from "../services/TokenService";
 import UserService from "../services/UserService";
 import { resServerError } from "../utils";
+import { isCorrectPassword } from "../utils/user";
 
 export default class TokenController {
   static async refresh(req: Request, res: Response<LoginRes | BaseRes>) {
@@ -78,10 +85,19 @@ export default class TokenController {
   }
 
   static async deleteAllByUserId(
-    req: Request & { user?: JwtPayload },
+    req: Request<{}, {}, PasswordValidationReq> & { user?: JwtPayload },
     res: Response<BaseRes>
   ) {
     try {
+      const isPasswordMatch = await isCorrectPassword(
+        req.body.password,
+        req.user!.userId,
+        res
+      );
+      if (!isPasswordMatch) {
+        return;
+      }
+
       await TokenService.deleteAllByUserId(req.user!.userId);
       res
         .status(ResStatus.NO_CONTENT)

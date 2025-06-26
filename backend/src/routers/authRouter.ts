@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { uploadAvatar } from "../utils/handlers";
 import UserController from "../controllers/UserController";
 import TokenController from "../controllers/TokenController";
 
@@ -16,5 +17,11 @@ authRouter.delete(
 authRouter.delete("/deleteSelfUserById", UserController.deleteSelfById);
 authRouter.put("/updatePassword", UserController.updatePassword);
 authRouter.post("/comparePassword", UserController.comparePassword);
+authRouter.put("/updateUsername", UserController.updateUsername);
+authRouter.post(
+  "/uploadAvatar",
+  uploadAvatar.single("avatar"),
+  UserController.uploadAvatar
+);
 
 export default authRouter;

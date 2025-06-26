@@ -9,6 +9,9 @@ import {
   useDeleteSelfUserMutation,
   useGetSelfQuery,
   useUpdatePasswordMutation,
+  useUpdateUsernameMutation,
+  useUploadAvatarMutation,
+  useUsernameExistQuery,
 } from '../api/userApi'
 import Avatar from '../components/ui/Avatar'
 import Loader from '../components/ui/Loader'
@@ -28,9 +31,12 @@ const ProfilePage: FC = () => {
 
   const [comparePassword, { isSuccess: isPasswordCorrect, isError: isPasswordError, error: passwordError }] =
     useComparePasswordMutation()
-  const [deleteAllTokens, { isSuccess: isSuccessDeleteAllTokens }] = useDeleteAllTokensMutation()
-  const [deleteSelfUser, { isSuccess: isSuccessDeleteSelfUser }] = useDeleteSelfUserMutation()
-  const [updatePassword, { isSuccess: isSuccessUpdatePassword }] = useUpdatePasswordMutation()
+  const [deleteAllTokens, { isSuccess: isSuccessDeleteAllTokens, isLoading: isLoadingDeleteAllTokens }] =
+    useDeleteAllTokensMutation()
+  const [deleteSelfUser, { isSuccess: isSuccessDeleteSelfUser, isLoading: isLoadingDeleteSelfUser }] =
+    useDeleteSelfUserMutation()
+  const [updatePassword, { isSuccess: isSuccessUpdatePassword, isLoading: isLoadingUpdatePassword }] =
+    useUpdatePasswordMutation()
 
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [modalData, setModalData] = useState<string>('')
@@ -38,6 +44,54 @@ const ProfilePage: FC = () => {
 
   const [newPassword, setNewPassword] = useState('')
   const [isPasswordChange, setIsPasswordChange] = useState(false)
+
+  const [newUsername, setNewUsername] = useState('')
+  const debouncedUsername = useDebounce(newUsername, 500)
+  const [isUsernameChange, setIsUsernameChange] = useState(false)
+
+  const { isSuccess: isUsernameSuccess, isFetching: isUsernameFetching } = useUsernameExistQuery(debouncedUsername!, {
+    skip: !debouncedUsername || debouncedUsername.length < 6 || debouncedUsername.length > 16,
+    refetchOnMountOrArgChange: true,
+  })
+
+  const [
+    uploadAvatar,
+    {
+      isLoading: isLoadingUploadAvatar,
+      isSuccess: isSuccessUploadAvatar,
+      isError: isErrorUploadAvatar,
+      error: errorUploadAvatar,
+    },
+  ] = useUploadAvatarMutation()
+  const [avatar, setAvatar] = useState<File>()
+  const [isAvatarChange, setIsAvatarChange] = useState(false)
+
+  const [
+    updateUsername,
+    {
+      isError: isUpdateUsernameError,
+      error: updateUsernameError,
+      isSuccess: isSuccessUpdateUsername,
+      isLoading: isLoadingUpdateUsername,
+    },
+  ] = useUpdateUsernameMutation()
+
+  const isUsernameButtonDisabled =
+    newUsername.length < 6 ||
+    newUsername.length > 16 ||
+    !isUsernameSuccess ||
+    isUsernameFetching ||
+    newUsername !== debouncedUsername
+
+  useEffect(() => {
+    if (!isErrorUploadAvatar) return
+    toast.error(isErrorMessage(errorUploadAvatar) ? errorUploadAvatar.data.message : 'Unknown error')
+  }, [isErrorUploadAvatar, errorUploadAvatar])
+
+  useEffect(() => {
+    if (!isUpdateUsernameError) return
+    toast.error(isErrorMessage(updateUsernameError) ? updateUsernameError.data.message : 'Unknown error')
+  }, [isUpdateUsernameError, updateUsernameError])
 
   useEffect(() => {
     if (!debouncedPassword || debouncedPassword.length < 8 || debouncedPassword.length > 32) return
@@ -55,9 +109,22 @@ const ProfilePage: FC = () => {
   }, [isPasswordError, passwordError])
 
   useEffect(() => {
-    if (!isSuccessDeleteAllTokens && !isSuccessDeleteSelfUser && !isSuccessUpdatePassword) return
+    if (
+      !isSuccessDeleteAllTokens &&
+      !isSuccessDeleteSelfUser &&
+      !isSuccessUpdatePassword &&
+      !isSuccessUpdateUsername &&
+      !isSuccessUploadAvatar
+    )
+      return
     window.location.reload()
-  }, [isSuccessDeleteAllTokens, isSuccessDeleteSelfUser, isSuccessUpdatePassword])
+  }, [
+    isSuccessDeleteAllTokens,
+    isSuccessDeleteSelfUser,
+    isSuccessUpdatePassword,
+    isSuccessUpdateUsername,
+    isSuccessUploadAvatar,
+  ])
 
   return (
     <>
@@ -72,19 +139,84 @@ const ProfilePage: FC = () => {
             <header>
               <span onClick={() => navigate('/messages')}>&#8592;</span>
               <Avatar userId={data.id} />
-              <button>{t('change')}</button>
+              {isAvatarChange ? (
+                <div className={cl.entityChangeDiv}>
+                  <input
+                    type='file'
+                    accept='image/jpeg'
+                    onChange={(event) => setAvatar(event.currentTarget.files?.[0])}
+                  />
+
+                  <p>{t('avatarRequirementsText')}</p>
+
+                  <div>
+                    <button
+                      disabled={
+                        isLoadingUploadAvatar || !avatar || avatar.type !== 'image/jpeg' || avatar.size > 1024 * 1024
+                      }
+                      onClick={() => {
+                        uploadAvatar(avatar!)
+                      }}
+                    >
+                      &#10004;
+                    </button>
+                    <button
+                      onClick={() => {
+                        setIsAvatarChange(false)
+                        setAvatar(undefined)
+                      }}
+                    >
+                      &#10006;
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <button onClick={() => setIsAvatarChange(true)}>{t('change')}</button>
+              )}
+
               <h1>
                 {t('profileText')} {data.username}
               </h1>
             </header>
 
             <main>
-              <div>
-                <span>
-                  <b>{t('usernameText')}:</b> {data.username}
-                </span>
-                <button>{t('change')}</button>
-              </div>
+              {isUsernameChange ? (
+                <div className={cl.entityChangeDiv}>
+                  <input
+                    className={isUsernameButtonDisabled && newUsername ? cl.invalidInput : ''}
+                    placeholder={t('changeUsernamePlaceholderText')}
+                    type='text'
+                    value={newUsername}
+                    onChange={(event) => setNewUsername(event.currentTarget.value.replace(/\s+/g, ''))}
+                  />
+
+                  <div>
+                    <button
+                      disabled={isUsernameButtonDisabled || isLoadingUpdateUsername}
+                      onClick={() => {
+                        updateUsername({ username: newUsername })
+                      }}
+                    >
+                      &#10004;
+                    </button>
+                    <button
+                      onClick={() => {
+                        setIsUsernameChange(false)
+                        setNewUsername('')
+                      }}
+                    >
+                      &#10006;
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div>
+                  <span>
+                    <b>{t('usernameText')}:</b> {data.username}
+                  </span>
+                  <button onClick={() => setIsUsernameChange(true)}>{t('change')}</button>
+                </div>
+              )}
 
               <p>
                 <b>Email:</b> {data.email}
@@ -109,10 +241,15 @@ const ProfilePage: FC = () => {
               />
 
               <button
-                disabled={!isPasswordCorrect}
+                disabled={!isPasswordCorrect || password !== debouncedPassword}
                 onClick={() => {
                   setModalData(t('sessionsLogoutConfirmText'))
-                  setOnConfirmFn(() => deleteAllTokens)
+                  setOnConfirmFn(() => () => {
+                    if (!isLoadingDeleteAllTokens) {
+                      deleteAllTokens({ password })
+                      setIsModalOpen(false)
+                    }
+                  })
                   setIsModalOpen(true)
                 }}
               >
@@ -133,8 +270,14 @@ const ProfilePage: FC = () => {
 
                   <div>
                     <button
-                      disabled={newPassword.length < 8 || newPassword.length > 32}
-                      onClick={() => updatePassword({ password: newPassword })}
+                      disabled={
+                        newPassword.length < 8 ||
+                        newPassword.length > 32 ||
+                        !isPasswordCorrect ||
+                        password !== debouncedPassword ||
+                        isLoadingUpdatePassword
+                      }
+                      onClick={() => updatePassword({ password, newPassword })}
                     >
                       &#10004;
                     </button>
@@ -150,16 +293,24 @@ const ProfilePage: FC = () => {
                   </div>
                 </div>
               ) : (
-                <button disabled={!isPasswordCorrect} onClick={() => setIsPasswordChange(true)}>
+                <button
+                  disabled={!isPasswordCorrect || password !== debouncedPassword}
+                  onClick={() => setIsPasswordChange(true)}
+                >
                   {t('changePasswordText')}
                 </button>
               )}
 
               <button
-                disabled={!isPasswordCorrect}
+                disabled={!isPasswordCorrect || password !== debouncedPassword}
                 onClick={() => {
                   setModalData(t('deleteAccountConfirmText'))
-                  setOnConfirmFn(() => deleteSelfUser)
+                  setOnConfirmFn(() => () => {
+                    if (!isLoadingDeleteSelfUser) {
+                      deleteSelfUser({ password })
+                      setIsModalOpen(false)
+                    }
+                  })
                   setIsModalOpen(true)
                 }}
               >

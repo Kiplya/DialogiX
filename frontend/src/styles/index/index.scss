@@ -74,11 +74,5 @@ ul {
 }
 
 .Toastify__close-button {
-  color: var(--toastify-button-color);
-  opacity: revert;
-  transition: color 0.1s linear;
-}
-
-.Toastify__close-button:hover {
-  color: var(--toastify-button-hover-color);
+  display: none;
 }

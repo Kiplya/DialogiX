@@ -47,7 +47,7 @@ export type JwtPayload = {
 };
 
 export type GetManyUsersRes = {
-  users: { id: string; username: string; avatar: string | null }[];
+  users: { id: string; username: string; hasAvatar: boolean }[];
   hasMore: boolean;
 };
 
@@ -57,5 +57,13 @@ export type GetSelfUserRes = {
   username: string;
   registredAt: Date;
   isAdmin: boolean;
-  avatar: string | null;
+  hasAvatar: boolean;
+};
+
+export type UpdatePasswordReq = {
+  newPassword: string;
+} & PasswordValidationReq;
+
+export type UpadateUsernameReq = {
+  username: string;
 };

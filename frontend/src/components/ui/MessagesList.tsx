@@ -22,7 +22,7 @@ const MessagesList: FC = () => {
   const { t } = useTranslation('msg')
   const navigate = useNavigate()
   const { username } = useParams()
-  const [logoutMutation] = useLogoutMutation()
+  const [logoutMutation, { isLoading: isLoadingLogout }] = useLogoutMutation()
   const [isShowModal, setIsShowModal] = useState(false)
 
   const dropdownMenuOptions: DropdownMenuOption[] = useMemo(
@@ -161,7 +161,9 @@ const MessagesList: FC = () => {
         isOpen={isShowModal}
         modalData={t('logoutConfirmText')}
         onClose={() => setIsShowModal(false)}
-        onConfirm={() => logoutMutation()}
+        onConfirm={() => {
+          if (!isLoadingLogout) logoutMutation()
+        }}
       />
     </>
   )

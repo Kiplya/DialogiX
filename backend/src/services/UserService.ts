@@ -11,7 +11,7 @@ export default class UserService {
         username: true,
         registredAt: true,
         isAdmin: true,
-        avatar: true,
+        hasAvatar: true,
       },
     });
   }
@@ -54,7 +54,7 @@ export default class UserService {
       },
       skip: (page - 1) * limit,
       take: limit,
-      select: { id: true, username: true, avatar: true },
+      select: { id: true, username: true, hasAvatar: true },
     });
 
     const totalUsers = await prisma.user.findMany({
@@ -98,6 +98,20 @@ export default class UserService {
     return await prisma.user.findUnique({
       where: { id },
       select: { password: true },
+    });
+  }
+
+  static async updateUsername(id: string, username: string) {
+    await prisma.user.update({
+      where: { id },
+      data: { username },
+    });
+  }
+
+  static async updateHasAvatar(id: string, hasAvatar: boolean) {
+    await prisma.user.update({
+      where: { id },
+      data: { hasAvatar },
     });
   }
 }

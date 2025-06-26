@@ -5,3 +5,4 @@ migrations/
 package-lock.json
 *.css
 *.css.map
+uploads/

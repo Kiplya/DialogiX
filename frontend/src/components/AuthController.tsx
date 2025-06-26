@@ -12,13 +12,14 @@ const AuthController: FC<PropsWithChildren> = ({ children }) => {
     refreshTokensMutation()
 
     if (!localStorage.getItem('theme')) {
-      localStorage.setItem('theme', 'dark')
-    } else if (localStorage.getItem('theme') === 'light') {
+      localStorage.setItem('theme', window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+    }
+    if (localStorage.getItem('theme') === 'light') {
       document.body.classList.toggle('light-theme')
     }
 
     if (!localStorage.getItem('language')) {
-      localStorage.setItem('language', 'ru')
+      localStorage.setItem('language', navigator.language.slice(0, 2))
     }
   }, [refreshTokensMutation])
 

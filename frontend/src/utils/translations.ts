@@ -2,7 +2,7 @@ import i18n from 'i18next'
 import { initReactI18next } from 'react-i18next'
 
 i18n.use(initReactI18next).init({
-  lng: localStorage.getItem('language') || 'ru',
+  lng: localStorage.getItem('language') || navigator.language.slice(0, 2),
   fallbackLng: 'en',
   ns: ['auth', 'reg', 'common'],
 
@@ -36,6 +36,9 @@ i18n.use(initReactI18next).init({
         sessionsLogoutConfirmText: 'Are you sure you want to log out from all devices (including this one)?',
         deleteAccountConfirmText: 'Are you sure you want to delete your account FOREVER?',
         changePasswordPlaceholderText: 'Input new password',
+        changeUsernamePlaceholderText: 'Input new username',
+        avatarRequirementsText:
+          'The image must be in .jpg format, square-shaped, have dimensions between 128x128 and 1024x1024 pixels, and be smaller than 1 MB in size.',
       },
 
       common: {
@@ -105,6 +108,9 @@ i18n.use(initReactI18next).init({
         sessionsLogoutConfirmText: 'Вы действительно хотите выйти со всех устройств (включая это)?',
         deleteAccountConfirmText: 'Вы действительно хотите удалить аккаунт НАВСЕГДА?',
         changePasswordPlaceholderText: 'Введите новый пароль',
+        changeUsernamePlaceholderText: 'Введите новый никнейм',
+        avatarRequirementsText:
+          'Изображение должно быть формата .jpg, быть квадратным, иметь размер от 128х128 до 1024х1024 и весить меньше 1 МБ',
       },
 
       reg: {

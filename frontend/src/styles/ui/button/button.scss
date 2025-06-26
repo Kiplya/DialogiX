@@ -4,6 +4,7 @@ button {
   font-size: $font-size-smaller;
   font-family: 'Roboto';
   color: var(--text-color);
+  user-select: none;
 
   padding: 0.5rem;
   background-color: var(--button-background-color);

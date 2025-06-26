@@ -25,6 +25,7 @@
 
       & > span {
         white-space: nowrap;
+        user-select: none;
       }
 
       @media (hover: hover) {

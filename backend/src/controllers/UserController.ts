@@ -8,6 +8,8 @@ import {
   GetManyUsersRes,
   GetSelfUserRes,
   PasswordValidationReq,
+  UpdatePasswordReq,
+  UpadateUsernameReq,
 } from "@shared/index";
 import { Request, Response, NextFunction } from "express";
 import UserService from "../services/UserService";
@@ -16,9 +18,17 @@ import {
   loginValidation,
   passwordValidation,
   registrationValidation,
+  isCorrectPassword,
+  usernameValidation,
+  isUsernameExist,
+  isEmailExist,
+  deleteUserAvatar,
 } from "../utils/user";
 import { hash } from "../utils/crypt";
 import bcrypt from "bcryptjs";
+import path from "path";
+import fs from "fs";
+import sharp from "sharp";
 import { verifyAccessToken, verifyRefreshToken } from "../utils/jwt";
 import TokenService from "../services/TokenService";
 import ChatService from "../services/ChatService";
@@ -29,7 +39,21 @@ export default class UserController {
     res: Response<BaseRes>
   ) {
     try {
-      if (!registrationValidation(req, res)) {
+      if (
+        !registrationValidation(
+          req.body.email,
+          req.body.password,
+          req.body.username,
+          res
+        )
+      ) {
+        return;
+      }
+
+      if (
+        (await isUsernameExist(req.body.username, res)) ||
+        (await isEmailExist(req.body.email, res))
+      ) {
         return;
       }
 
@@ -54,7 +78,7 @@ export default class UserController {
     res: Response<LoginRes | BaseRes>
   ) {
     try {
-      if (!loginValidation(req, res)) {
+      if (!loginValidation(req.body.email, req.body.password, res)) {
         return;
       }
 
@@ -165,11 +189,7 @@ export default class UserController {
         return;
       }
 
-      const user = await UserService.getByEmail(email.toString());
-      if (user) {
-        res
-          .status(ResStatus.INVALID_CREDENTIALS)
-          .json({ message: "Email is already in use" });
+      if (await isEmailExist(email.toString(), res)) {
         return;
       }
 
@@ -189,11 +209,7 @@ export default class UserController {
         return;
       }
 
-      const user = await UserService.getByUsername(username.toString());
-      if (user) {
-        res
-          .status(ResStatus.INVALID_CREDENTIALS)
-          .json({ message: "Username is already in use" });
+      if (await isUsernameExist(username.toString(), res)) {
         return;
       }
 
@@ -246,12 +262,22 @@ export default class UserController {
   }
 
   static async deleteSelfById(
-    req: Request & { user?: JwtPayload },
+    req: Request<{}, {}, PasswordValidationReq> & { user?: JwtPayload },
     res: Response<BaseRes>
   ) {
     try {
+      const isPasswordMatch = await isCorrectPassword(
+        req.body.password,
+        req.user!.userId,
+        res
+      );
+      if (!isPasswordMatch) {
+        return;
+      }
+
       await ChatService.deleteAllChatsByUserId(req.user!.userId);
       await UserService.deleteById(req.user!.userId);
+      deleteUserAvatar(req.user!.userId);
 
       res.status(ResStatus.OK).json({ message: "Successful delete user" });
     } catch (err) {
@@ -260,15 +286,24 @@ export default class UserController {
   }
 
   static async updatePassword(
-    req: Request<{}, {}, PasswordValidationReq> & { user?: JwtPayload },
+    req: Request<{}, {}, UpdatePasswordReq> & { user?: JwtPayload },
     res: Response<BaseRes>
   ) {
     try {
-      if (!passwordValidation(req, res)) {
+      if (!passwordValidation(req.body.newPassword, res)) {
         return;
       }
 
-      const hashedPassword = await hash(req.body.password);
+      const isPasswordMatch = await isCorrectPassword(
+        req.body.password,
+        req.user!.userId,
+        res
+      );
+      if (!isPasswordMatch) {
+        return;
+      }
+
+      const hashedPassword = await hash(req.body.newPassword);
       await UserService.updatePassword(req.user!.userId, hashedPassword);
       await TokenService.deleteAllByUserId(req.user!.userId);
 
@@ -283,26 +318,104 @@ export default class UserController {
     res: Response<BaseRes>
   ) {
     try {
-      const passwordEntity = await UserService.getPasswordById(
-        req.user!.userId
-      );
-      if (!passwordEntity) {
-        throw new Error("No password found");
+      if (!passwordValidation(req.body.password, res)) {
+        return;
       }
 
-      const isPasswordMatch = await bcrypt.compare(
+      const isPasswordMatch = await isCorrectPassword(
         req.body.password,
-        passwordEntity.password
-      );
-
-      if (!isPasswordMatch) {
+        req.user!.userId,
         res
-          .status(ResStatus.INVALID_CREDENTIALS)
-          .json({ message: "Incorrect password" });
+      );
+      if (!isPasswordMatch) {
         return;
       }
 
       res.status(ResStatus.OK).json({ message: "Correct password" });
+    } catch (err) {
+      resServerError(res, err);
+    }
+  }
+
+  static async updateUsername(
+    req: Request<{}, {}, UpadateUsernameReq> & { user?: JwtPayload },
+    res: Response<BaseRes>
+  ) {
+    try {
+      if (!usernameValidation(req.body.username, res)) {
+        return;
+      }
+      if (await isUsernameExist(req.body.username, res)) {
+        return;
+      }
+
+      await UserService.updateUsername(req.user!.userId, req.body.username);
+      res.status(ResStatus.OK).json({ message: "Username successful changed" });
+    } catch (err) {
+      resServerError(res, err);
+    }
+  }
+
+  static async uploadAvatar(
+    req: Request & { user?: JwtPayload },
+    res: Response<BaseRes>
+  ) {
+    try {
+      const file = req.file;
+      if (!file) {
+        res
+          .status(ResStatus.INVALID_CREDENTIALS)
+          .json({ message: "No file uploaded" });
+        return;
+      }
+
+      const backupPath = file.path + ".backup";
+      const invalidFileAction = (message: string) => {
+        fs.unlinkSync(file.path);
+        if (fs.existsSync(backupPath)) {
+          fs.renameSync(backupPath, file.path);
+        }
+
+        res.status(ResStatus.INVALID_CREDENTIALS).json({ message });
+      };
+
+      const ext = path.extname(file.originalname).toLowerCase();
+      if (ext !== ".jpg" || file.mimetype !== "image/jpeg") {
+        invalidFileAction("Only .jpg files are allowed");
+        return;
+      }
+
+      if (file.size > 1024 * 1024) {
+        invalidFileAction("File is too large (max 1MB)");
+        return;
+      }
+
+      const image = sharp(file.path);
+      const metadata = await image.metadata();
+
+      if (!metadata.width || !metadata.height) {
+        invalidFileAction("Invalid image");
+        return;
+      }
+
+      if (metadata.width !== metadata.height) {
+        invalidFileAction("Image must be square");
+        return;
+      }
+
+      if (metadata.width < 128 || metadata.width > 1024) {
+        invalidFileAction(
+          "Image dimensions must be between 128x128 and 1024x1024"
+        );
+        return;
+      }
+
+      if (fs.existsSync(backupPath)) {
+        fs.unlinkSync(backupPath);
+      }
+      await UserService.updateHasAvatar(req.user!.userId, true);
+
+      res.status(ResStatus.OK).json({ message: "Avatar uploaded" });
     } catch (err) {
       resServerError(res, err);
     }

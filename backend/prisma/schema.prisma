@@ -25,7 +25,7 @@ model user {
 
   registredAt       DateTime      @default(now()) @db.Timestamptz(0)
   isAdmin           Boolean       @default(false)
-  hasAvatar         Boolean       @default(false)
+  isOnline          Boolean       @default(false)
 
   tokens            token[]
   chatParticipant   chatParticipant[]

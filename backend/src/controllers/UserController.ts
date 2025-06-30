@@ -32,6 +32,7 @@ import sharp from "sharp";
 import { verifyAccessToken, verifyRefreshToken } from "../utils/jwt";
 import TokenService from "../services/TokenService";
 import ChatService from "../services/ChatService";
+import { GetUserByUsernameRes } from "../../../shared/index";
 
 export default class UserController {
   static async registration(
@@ -261,6 +262,33 @@ export default class UserController {
     }
   }
 
+  static async getByUsername(
+    req: Request,
+    res: Response<GetUserByUsernameRes | BaseRes>
+  ) {
+    try {
+      const username = req.query.username;
+      if (!username) {
+        res
+          .status(ResStatus.INVALID_CREDENTIALS)
+          .json({ message: "No username provided" });
+        return;
+      }
+
+      const user = await UserService.getByUsername(username.toString());
+      if (!user) {
+        res
+          .status(ResStatus.INVALID_CREDENTIALS)
+          .json({ message: "No user found" });
+        return;
+      }
+
+      res.status(ResStatus.OK).json(user);
+    } catch (err) {
+      resServerError(res, err);
+    }
+  }
+
   static async deleteSelfById(
     req: Request<{}, {}, PasswordValidationReq> & { user?: JwtPayload },
     res: Response<BaseRes>
@@ -413,7 +441,6 @@ export default class UserController {
       if (fs.existsSync(backupPath)) {
         fs.unlinkSync(backupPath);
       }
-      await UserService.updateHasAvatar(req.user!.userId, true);
 
       res.status(ResStatus.OK).json({ message: "Avatar uploaded" });
     } catch (err) {

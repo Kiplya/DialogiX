@@ -11,7 +11,7 @@ import Loader from './Loader'
 import Message from './Message'
 import Modal from './Modal'
 
-import { useGetManyUsersByUsernameQuery } from '../../api/messageApi'
+import { useGetManyUsersByUsernameQuery, useGetChatsByUserIdQuery } from '../../api/chatApi'
 import { useLogoutMutation } from '../../api/userApi'
 import useDebounce from '../../hooks/useDebounce'
 import dialogCl from '../../styles/ui/dialog/dialog.module.css'
@@ -31,6 +31,7 @@ const MessagesList: FC = () => {
         label: t('profileText'),
         onClick: () => navigate('/profile'),
       },
+
       {
         label: t('currentThemeText'),
         onClick: () => {
@@ -39,6 +40,7 @@ const MessagesList: FC = () => {
           document.body.classList.toggle('light-theme')
         },
       },
+
       {
         label: t('currentLanguageText'),
         onClick: () => {
@@ -47,6 +49,7 @@ const MessagesList: FC = () => {
           localStorage.setItem('language', newLanguage)
         },
       },
+
       {
         label: t('logoutText'),
         onClick: () => setIsShowModal(true),
@@ -73,6 +76,19 @@ const MessagesList: FC = () => {
       refetchOnMountOrArgChange: true,
     },
   )
+
+  const {
+    data: chatsDataQuery,
+    isFetching: isFetchingChatsQuery,
+    isSuccess: isSuccessChatsQuery,
+  } = useGetChatsByUserIdQuery()
+
+  const [chats, setChats] = useState<typeof chatsDataQuery>()
+
+  useEffect(() => {
+    if (!isSuccessChatsQuery) return
+    setChats(chatsDataQuery)
+  }, [isSuccessChatsQuery, chatsDataQuery])
 
   useEffect(() => {
     if (inView && !searchIsFetching && searchIsSuccess) {
@@ -112,9 +128,9 @@ const MessagesList: FC = () => {
   return (
     <>
       <div className={cl.pageDiv}>
-        <div className={cl.layoutDiv}>
+        <div className={`${cl.layoutDiv} ${username ? cl.selected : ''}`}>
           <header>
-            <DropdownMenu className={cl.dropdownMenuLabel} options={dropdownMenuOptions} label='&#8801;' />
+            <DropdownMenu options={dropdownMenuOptions} label='&#8801;' />
             <input
               placeholder={t('searchPlaceholderText')}
               value={searchQuery}
@@ -132,7 +148,7 @@ const MessagesList: FC = () => {
             {debouncedUsername && foundUsers?.users && foundUsers.users.length > 0 && (
               <>
                 {foundUsers.users.map((user) => (
-                  <DialogContainer userId={user.id} username={user.username} />
+                  <DialogContainer key={user.id} userId={user.id} username={user.username} isOnline={user.isOnline} />
                 ))}
                 <div ref={ref} style={{ height: '1px', width: '1px' }} />
               </>
@@ -144,12 +160,22 @@ const MessagesList: FC = () => {
               </div>
             )}
 
-            {!debouncedUsername}
+            {!debouncedUsername && !chats && isFetchingChatsQuery && (
+              <div className={cl.loaderDiv}>
+                <Loader />
+              </div>
+            )}
+
+            {!debouncedUsername && chats && chats.length === 0 && (
+              <span className={cl.notFounded}>{t('notFounedDialogsText')}</span>
+            )}
+
+            {!debouncedUsername && chats && chats.length > 0}
           </main>
         </div>
 
         {username ? (
-          <Outlet context={{ username }} />
+          <Outlet />
         ) : (
           <div className={dialogCl.layoutDiv}>
             <Message className={messageCl.previewMessage} text={t('nonSelectedDialogText')} />

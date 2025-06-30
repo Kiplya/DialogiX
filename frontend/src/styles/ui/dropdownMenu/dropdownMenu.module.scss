@@ -12,7 +12,13 @@
     user-select: none;
   }
 
+  & > ul.ulLeftDirection {
+    left: revert;
+    right: 0;
+  }
+
   & > ul {
+    z-index: 5;
     position: absolute;
     top: 100%;
     left: 0;

@@ -11,7 +11,6 @@ export default class UserService {
         username: true,
         registredAt: true,
         isAdmin: true,
-        hasAvatar: true,
       },
     });
   }
@@ -23,7 +22,10 @@ export default class UserService {
   }
 
   static async getByUsername(username: string) {
-    return await prisma.user.findUnique({ where: { username } });
+    return await prisma.user.findUnique({
+      where: { username },
+      select: { username: true, id: true, isOnline: true },
+    });
   }
 
   static async getManyByUsername(
@@ -54,7 +56,7 @@ export default class UserService {
       },
       skip: (page - 1) * limit,
       take: limit,
-      select: { id: true, username: true, hasAvatar: true },
+      select: { id: true, username: true, isOnline: true },
     });
 
     const totalUsers = await prisma.user.findMany({
@@ -105,13 +107,6 @@ export default class UserService {
     await prisma.user.update({
       where: { id },
       data: { username },
-    });
-  }
-
-  static async updateHasAvatar(id: string, hasAvatar: boolean) {
-    await prisma.user.update({
-      where: { id },
-      data: { hasAvatar },
     });
   }
 }

@@ -1,11 +1,11 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
 
-import { GetManyUsersRes } from '@shared/index'
+import { GetChatsByUserIdRes, GetManyUsersRes } from '@shared/index'
 
 import { baseQuery } from '../utils/fetchHandlers'
 
-export const messageApi = createApi({
-  reducerPath: 'messageApi',
+export const chatApi = createApi({
+  reducerPath: 'chatApi',
   baseQuery,
 
   endpoints: (builder) => ({
@@ -16,7 +16,14 @@ export const messageApi = createApi({
         params: credentials,
       }),
     }),
+
+    getChatsByUserId: builder.query<GetChatsByUserIdRes, void>({
+      query: () => ({
+        url: 'chat/getChatsByUserId',
+        method: 'GET',
+      }),
+    }),
   }),
 })
 
-export const { useGetManyUsersByUsernameQuery } = messageApi
+export const { useGetManyUsersByUsernameQuery, useGetChatsByUserIdQuery } = chatApi

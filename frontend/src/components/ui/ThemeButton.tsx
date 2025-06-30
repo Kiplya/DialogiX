@@ -13,7 +13,7 @@ const ThemeButton: FC = () => {
 
   return (
     <img
-      src={localStorage.getItem('theme') === 'light' ? 'img/light-theme-button.webp' : 'img/dark-theme-button.webp'}
+      src={localStorage.getItem('theme') === 'light' ? '/img/light-theme-button.webp' : '/img/dark-theme-button.webp'}
       alt=''
       onClick={toggleTheme}
     />

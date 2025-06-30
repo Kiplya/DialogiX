@@ -9,6 +9,7 @@ authRouter.use(UserController.authMiddleware);
 authRouter.post("/logout", UserController.logout);
 authRouter.get("/getManyUsersByUsername", UserController.getManyByUsername);
 authRouter.get("/getSelfById", UserController.getSelfById);
+authRouter.get("/getUserByUsername", UserController.getByUsername);
 
 authRouter.delete(
   "/deleteAllTokensByUserId",

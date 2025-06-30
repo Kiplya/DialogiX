@@ -2,19 +2,30 @@ import { prisma } from "../utils/handlers";
 import { encrypt, decrypt } from "../utils/crypt";
 
 export default class ChatService {
-  static async getChatByUserId(userId: string) {
+  static async getChatsByUserId(userId: string) {
     const chats = await prisma.chatParticipant.findMany({
       where: { userId },
       include: {
         chat: {
           include: {
             messages: {
+              select: {
+                createdAt: true,
+                text: true,
+              },
               orderBy: { createdAt: "desc" },
               take: 1,
             },
             chatParticipants: {
+              where: { userId: { not: userId } },
               include: {
-                user: true,
+                user: {
+                  select: {
+                    id: true,
+                    username: true,
+                    isOnline: true,
+                  },
+                },
               },
             },
           },
@@ -22,11 +33,25 @@ export default class ChatService {
       },
     });
 
-    return chats.sort(
-      (a, b) =>
-        new Date(b.chat.messages[0].createdAt).getTime() -
-        new Date(a.chat.messages[0].createdAt).getTime()
-    );
+    return chats
+      .map((chat) => {
+        let lastMessage = "";
+        if (chat.chat.messages[0].text) {
+          lastMessage = decrypt(chat.chat.messages[0].text);
+        }
+
+        return {
+          userId: chat.chat.chatParticipants[0].user.id,
+          username: chat.chat.chatParticipants[0].user.username,
+          lastMessage,
+          isOnline: chat.chat.chatParticipants[0].user.isOnline,
+          createdAt: chat.chat.messages[0].createdAt,
+        };
+      })
+      .sort(
+        (a, b) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      );
   }
 
   static async getMessagesByChatId(chatId: string) {

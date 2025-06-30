@@ -10,11 +10,12 @@ export interface DropdownMenuOption {
 interface DropdownMenuProps {
   className?: string
   options: DropdownMenuOption[]
+  ulLeftDirection?: boolean
   label?: string
   imgUrl?: string
 }
 
-const DropdownMenu: FC<DropdownMenuProps> = ({ className, options, label, imgUrl }) => {
+const DropdownMenu: FC<DropdownMenuProps> = ({ className, options, label, imgUrl, ulLeftDirection }) => {
   const [isOpen, setIsOpen] = useState(false)
 
   return (
@@ -27,7 +28,7 @@ const DropdownMenu: FC<DropdownMenuProps> = ({ className, options, label, imgUrl
       {imgUrl && <img src={imgUrl} alt='' />}
 
       {isOpen && (
-        <ul>
+        <ul className={ulLeftDirection ? cl.ulLeftDirection : ''}>
           {options.map(({ label, onClick }, index) => (
             <li key={index} onClick={onClick}>
               <span>{label}</span>

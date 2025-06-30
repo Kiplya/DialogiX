@@ -3,6 +3,7 @@ import { createApi } from '@reduxjs/toolkit/query/react'
 import {
   BaseRes,
   GetSelfUserRes,
+  GetUserByUsernameRes,
   LoginReq,
   LoginRes,
   PasswordValidationReq,
@@ -150,10 +151,19 @@ export const userApi = createApi({
         return { url: '/auth/uploadAvatar', method: 'POST', body: formData }
       },
     }),
+
+    getUserByUsername: builder.query<GetUserByUsernameRes, string>({
+      query: (username) => ({
+        url: '/auth/getUserByUsername',
+        method: 'GET',
+        params: { username },
+      }),
+    }),
   }),
 })
 
 export const {
+  useGetUserByUsernameQuery,
   useUploadAvatarMutation,
   useUpdateUsernameMutation,
   useDeleteAllTokensMutation,

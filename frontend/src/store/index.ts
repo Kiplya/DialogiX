@@ -2,19 +2,19 @@ import { combineReducers, configureStore } from '@reduxjs/toolkit'
 
 import authSlice from './reducers/authSlice'
 
-import { messageApi } from '../api/messageApi'
+import { chatApi } from '../api/chatApi'
 import { userApi } from '../api/userApi'
 
 const rootReducer = combineReducers({
   authSlice,
   [userApi.reducerPath]: userApi.reducer,
-  [messageApi.reducerPath]: messageApi.reducer,
+  [chatApi.reducerPath]: chatApi.reducer,
 })
 
 export const store = configureStore({
   reducer: rootReducer,
   devTools: import.meta.env.MODE === 'development',
-  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(userApi.middleware).concat(messageApi.middleware),
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(userApi.middleware).concat(chatApi.middleware),
 })
 
 export type AppStore = typeof store

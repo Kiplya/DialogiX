@@ -8,6 +8,13 @@ i18n.use(initReactI18next).init({
 
   resources: {
     en: {
+      dialog: {
+        userOnlineText: 'Online',
+        userOfflineText: 'Offline',
+        deleteChatText: 'Delete entire chat',
+        deleteChatConfirmText: 'Are you sure you want to delete the entire chat?',
+      },
+
       msg: {
         nonSelectedDialogText: 'Select a conversation partner and start chatting!',
         searchPlaceholderText: 'Search by username',
@@ -17,6 +24,7 @@ i18n.use(initReactI18next).init({
         currentLanguageText: 'Change language',
         logoutText: 'Log out',
         logoutConfirmText: 'Are you sure you want to log out?',
+        notFounedDialogsText: 'No dialogs found',
       },
 
       profile: {
@@ -74,6 +82,13 @@ i18n.use(initReactI18next).init({
       },
     },
     ru: {
+      dialog: {
+        userOnlineText: 'Онлайн',
+        userOfflineText: 'Оффлайн',
+        deleteChatText: 'Удалить весь чат',
+        deleteChatConfirmText: 'Вы уверены, что хотите удалить весь чат?',
+      },
+
       msg: {
         nonSelectedDialogText: 'Выбирите собеседника и начните общаться!',
         searchPlaceholderText: 'Поиск по никнейму',
@@ -83,6 +98,7 @@ i18n.use(initReactI18next).init({
         currentLanguageText: 'Сменить язык',
         logoutText: 'Выйти',
         logoutConfirmText: 'Вы действительно хотите выйти?',
+        notFounedDialogsText: 'Диалоги не найдены',
       },
 
       common: {
@@ -99,7 +115,7 @@ i18n.use(initReactI18next).init({
         roleText: 'Роль',
         adminRoleText: 'Администратор',
         userRoleText: 'Пользователь',
-        dangerZoneText: 'Критическая зона',
+        dangerZoneText: 'Опасная зона',
         changePasswordText: 'Изменить пароль',
         sessionsLogoutText: 'Выйти со всех устройств (включая это)',
         deleteAccountText: 'Удалить аккаунт (навсегда)',

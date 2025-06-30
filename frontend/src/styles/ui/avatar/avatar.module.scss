@@ -1,5 +1,25 @@
-.avatar {
-  height: 4rem;
-  border-radius: 50%;
-  aspect-ratio: 1/1;
+.avatarDiv {
+  position: relative;
+  height: 100%;
+
+  & > img {
+    height: 100%;
+    border-radius: 50%;
+    aspect-ratio: 1/1;
+  }
+
+  & > div {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+
+    width: 0.5rem;
+    aspect-ratio: 1/1;
+    border-radius: 50%;
+    background-color: var(--offline-indicator-color);
+  }
+
+  & > div.online {
+    background-color: var(--online-indicator-color);
+  }
 }

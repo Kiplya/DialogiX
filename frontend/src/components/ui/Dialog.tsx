@@ -1,5 +1,5 @@
 import EmojiPicker, { EmojiStyle, Theme } from 'emoji-picker-react'
-import { Fragment, FC, useEffect, useMemo, useRef, useState } from 'react'
+import { Fragment, FC, useEffect, useMemo, useRef, useState, useCallback } from 'react'
 
 import { useTranslation } from 'react-i18next'
 import { useInView } from 'react-intersection-observer'
@@ -97,11 +97,16 @@ const Dialog: FC = () => {
   const [isShowEmojiPicker, setIsShowEmojiPicker] = useState(false)
   const isButtonDisabled = (cleanText(messageText) ? false : true) || !user || user.block !== 'false'
   const footerRef = useRef<HTMLDivElement>(null)
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
 
   const [editMessageId, setEditMessageId] = useState('')
   const sendMessageFn = () => {
     if (isButtonDisabled) return
     setIsShowEmojiPicker(false)
+
+    if (footerRef.current) {
+      footerRef.current.style.height = ''
+    }
 
     if (editMessageId) {
       socketControllers['edit_message'](editMessageId, cleanText(messageText), user.id)
@@ -184,6 +189,24 @@ const Dialog: FC = () => {
     posY: 0,
     isOpen: false,
   })
+
+  const adjustFooterHeight = useCallback(() => {
+    if (!footerRef.current || !textareaRef.current) return
+
+    footerRef.current.style.height = ''
+    const remInPx = parseFloat(getComputedStyle(document.documentElement).fontSize)
+    footerRef.current.style.height = textareaRef.current.scrollHeight + 'px'
+
+    if (parseFloat(footerRef.current.style.height) > 10 * remInPx) {
+      footerRef.current.style.height = 10 * remInPx + 'px'
+    } else if (parseFloat(footerRef.current.style.height) < 5 * remInPx) {
+      footerRef.current.style.height = 5 * remInPx + 'px'
+    }
+  }, [])
+
+  useEffect(() => {
+    adjustFooterHeight()
+  }, [adjustFooterHeight, editMessageId])
 
   useEffect(() => {
     if (!user) return
@@ -305,9 +328,7 @@ const Dialog: FC = () => {
     <>
       <div
         className={`${cl.layoutDiv} ${username ? cl.selected : ''}`}
-        onMouseDown={() =>
-          setContextMenu({ options: [], args: {}, leftDirection: false, posX: 0, posY: 0, isOpen: false })
-        }
+        onClick={() => setContextMenu({ options: [], args: {}, leftDirection: false, posX: 0, posY: 0, isOpen: false })}
       >
         {isFetchingUser && (
           <div className={cl.loaderDiv}>
@@ -424,30 +445,20 @@ const Dialog: FC = () => {
             </main>
 
             <footer ref={footerRef}>
-              <img src='/img/emoji-button.webp' alt='' onMouseDown={() => setIsShowEmojiPicker((prev) => !prev)} />
+              <img src='/img/emoji-button.webp' alt='' onClick={() => setIsShowEmojiPicker((prev) => !prev)} />
 
               <textarea
+                ref={textareaRef}
                 placeholder={t('messageTextareaPlaceholderText')}
                 value={messageText}
                 onChange={(event) => {
                   setMessageText(event.currentTarget.value)
                 }}
+                onInput={adjustFooterHeight}
                 onKeyDown={(event) => {
                   if (event.key === 'Enter' && !event.shiftKey) {
                     event.preventDefault()
                     sendMessageFn()
-                  }
-                }}
-                onFocus={() => {
-                  if (footerRef.current) {
-                    const remInPx = parseFloat(getComputedStyle(document.documentElement).fontSize)
-                    footerRef.current.style.height = remInPx * 10 + 'px'
-                  }
-                }}
-                onBlur={() => {
-                  if (footerRef.current) {
-                    const remInPx = parseFloat(getComputedStyle(document.documentElement).fontSize)
-                    footerRef.current && (footerRef.current.style.height = remInPx * 5 + 'px')
                   }
                 }}
               />
@@ -456,7 +467,7 @@ const Dialog: FC = () => {
                 className={isButtonDisabled ? cl.disabled : ''}
                 src='/img/send-message-button.webp'
                 alt=''
-                onMouseDown={sendMessageFn}
+                onClick={sendMessageFn}
               />
 
               <EmojiPicker

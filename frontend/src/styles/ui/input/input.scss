@@ -2,14 +2,14 @@
 
 input {
   font-family: 'Roboto';
-  font-size: $font-size-small;
+  font-size: $font-size-medium;
   color: var(--text-color);
   width: 100%;
 
   padding: 0.5rem;
   border-radius: 1rem;
   background-color: var(--input-background-color);
-  border: 0.05rem solid transparent;
+  border: 0.05rem solid var(--input-background-color);
 
   &::placeholder {
     color: var(--input-placeholder-color);

@@ -10,6 +10,7 @@ import {
   PasswordValidationReq,
   UpdatePasswordReq,
   UpadateUsernameReq,
+  GetUserByUsernameRes,
 } from "@shared/index";
 import { Request, Response, NextFunction } from "express";
 import UserService from "../services/UserService";
@@ -32,7 +33,6 @@ import sharp from "sharp";
 import { verifyAccessToken, verifyRefreshToken } from "../utils/jwt";
 import TokenService from "../services/TokenService";
 import ChatService from "../services/ChatService";
-import { GetUserByUsernameRes } from "../../../shared/index";
 
 export default class UserController {
   static async registration(
@@ -118,6 +118,7 @@ export default class UserController {
 
       res.status(ResStatus.OK).json({
         message: "Successfully logged in",
+        userId: user.id,
         isAdmin: user.isAdmin,
         accessToken,
       });
@@ -173,7 +174,7 @@ export default class UserController {
 
       req.user = tokenPayload;
       next();
-    } catch (err) {
+    } catch {
       res
         .status(ResStatus.UNAUTHORIZED)
         .json({ message: "Invalid or expired token" });
@@ -263,7 +264,7 @@ export default class UserController {
   }
 
   static async getByUsername(
-    req: Request,
+    req: Request & { user?: JwtPayload },
     res: Response<GetUserByUsernameRes | BaseRes>
   ) {
     try {
@@ -283,7 +284,27 @@ export default class UserController {
         return;
       }
 
-      res.status(ResStatus.OK).json(user);
+      const isBlocker = await UserService.isBlockedByIds(
+        req.user!.userId,
+        user.id
+      );
+
+      const isBlocked = await UserService.isBlockedByIds(
+        user.id,
+        req.user!.userId
+      );
+
+      let block: "false" | "blocker" | "blocked" = "false";
+
+      if (isBlocked) {
+        block = "blocked";
+      }
+
+      if (isBlocker) {
+        block = "blocker";
+      }
+
+      res.status(ResStatus.OK).json({ ...user, block });
     } catch (err) {
       resServerError(res, err);
     }

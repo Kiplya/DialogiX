@@ -1,11 +1,13 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 interface AuthState {
+  userId: string
   isAuth: boolean
   isAdmin: boolean
 }
 
 const initialState: AuthState = {
+  userId: '',
   isAuth: false,
   isAdmin: false,
 }
@@ -21,9 +23,13 @@ const authSlice = createSlice({
     setIsAdmin(state, action: PayloadAction<boolean>) {
       state.isAdmin = action.payload
     },
+
+    setUserId(state, action: PayloadAction<string>) {
+      state.userId = action.payload
+    },
   },
 })
 
-export const { setIsAuth, setIsAdmin } = authSlice.actions
+export const { setIsAuth, setIsAdmin, setUserId } = authSlice.actions
 
 export default authSlice.reducer

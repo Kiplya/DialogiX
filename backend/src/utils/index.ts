@@ -7,3 +7,7 @@ export const resServerError = (res: Response<BaseRes>, err: unknown) => {
     .status(ResStatus.INTERNAL_SERVER_ERROR)
     .json({ message: "Internal server error" });
 };
+
+export const getChatIdByUsersId = (userId_1: string, userId_2: string) => {
+  return [userId_1, userId_2].sort().join("_");
+};

@@ -1,15 +1,59 @@
-.message {
-  position: relative;
-  display: inline-block;
+@import '../../constants.scss';
 
-  padding: 1rem;
-  border-radius: 2rem;
-  background-color: var(--message-recepient-color);
+.message {
+  padding: 0.5rem;
+  border-radius: 1rem;
+  max-width: 60%;
+  white-space: pre-line;
+  overflow-wrap: break-word;
+
+  & > .editButtonDiv {
+    text-align: right;
+
+    & > span {
+      user-select: none;
+      cursor: pointer;
+      color: rgb(150, 45, 45);
+    }
+  }
+
+  & > .infoDiv {
+    text-align: right;
+
+    & > span {
+      font-size: $font-size-small;
+      user-select: none;
+      color: var(--info-message-color);
+    }
+
+    & > .readedMessage {
+      color: var(--online-indicator-color);
+    }
+  }
 
   &.previewMessage {
+    max-width: revert;
+    background-color: var(--recepient-message-color);
+    margin-inline: 3rem;
     text-align: center;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
+
+    position: relative;
+    bottom: 50%;
+    transform: translateY(50%);
+  }
+
+  &.myMessage {
+    align-self: end;
+    background-color: var(--my-message-color);
+  }
+
+  &.recepientMessage {
+    align-self: start;
+    background-color: var(--recepient-message-color);
+  }
+
+  &.dateMessage {
+    margin-top: 1rem;
+    background-color: var(--date-message-color);
   }
 }

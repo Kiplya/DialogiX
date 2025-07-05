@@ -23,11 +23,23 @@
     top: 100%;
     left: 0;
 
+    & > :first-child {
+      border-radius: 1rem 1rem 0 0;
+    }
+
+    & > :last-child {
+      border-radius: 0 0 1rem 1rem;
+    }
+
+    & > :only-child {
+      border-radius: 1rem;
+    }
+
     & > li {
       cursor: pointer;
       background-color: var(--button-background-color);
       padding: 0.5rem;
-      border: 0.05rem solid transparent;
+      border: 0.05rem solid var(--button-background-color);
 
       & > span {
         white-space: nowrap;

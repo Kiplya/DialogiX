@@ -1,0 +1,15 @@
+@import '../../mixins.scss';
+
+.epr-main {
+  @media (max-width: #{2 * 25rem}) {
+    width: 75% !important;
+  }
+}
+
+.epr-body {
+  @include scrollbar;
+}
+
+.epr-category-nav > button:first-child {
+  display: none !important;
+}

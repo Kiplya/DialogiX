@@ -22,9 +22,12 @@
   --dialog-container-hovered-background-color: rgb(60, 60, 60);
   --hamburger-button-color: var(--text-color);
 
-  --message-recepient-color: var(--toastify-background-color);
+  --my-message-color: rgb(194, 120, 121);
+  --recepient-message-color: var(--toastify-background-color);
   --online-indicator-color: rgb(113, 168, 236);
   --offline-indicator-color: rgb(180, 180, 180);
+  --date-message-color: rgb(80, 80, 80);
+  --info-message-color: rgb(200, 200, 200);
 }
 
 .light-theme {
@@ -51,7 +54,10 @@
   --dialog-container-hovered-background-color: rgb(215, 215, 215);
   --hamburger-button-color: var(--input-border-color);
 
-  --message-recepient-color: var(--toastify-background-color);
+  --my-message-color: var(--toastify-background-color);
+  --recepient-message-color: rgb(200, 200, 200);
   --online-indicator-color: rgb(113, 168, 236);
   --offline-indicator-color: rgb(180, 180, 180);
+  --date-message-color: rgb(180, 180, 180);
+  --info-message-color: rgb(60, 60, 60);
 }

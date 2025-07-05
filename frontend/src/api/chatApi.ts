@@ -1,6 +1,6 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
 
-import { GetChatsByUserIdRes, GetManyUsersRes } from '@shared/index'
+import { GetChatsByUserIdRes, GetManyUsersRes, GetMessagesByChatIdRes } from '@shared/index'
 
 import { baseQuery } from '../utils/fetchHandlers'
 
@@ -19,11 +19,21 @@ export const chatApi = createApi({
 
     getChatsByUserId: builder.query<GetChatsByUserIdRes, void>({
       query: () => ({
-        url: 'chat/getChatsByUserId',
+        url: '/chat/getChatsByUserId',
         method: 'GET',
       }),
+    }),
+
+    getMessagesByUsers: builder.query<GetMessagesByChatIdRes, { recepientId: string; page: number; limit: number }>({
+      query: (credentials) => ({
+        url: '/chat/getMessagesByUsers',
+        method: 'GET',
+        params: credentials,
+      }),
+
+      keepUnusedDataFor: 0,
     }),
   }),
 })
 
-export const { useGetManyUsersByUsernameQuery, useGetChatsByUserIdQuery } = chatApi
+export const { useGetManyUsersByUsernameQuery, useGetChatsByUserIdQuery, useLazyGetMessagesByUsersQuery } = chatApi

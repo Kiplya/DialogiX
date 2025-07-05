@@ -54,12 +54,13 @@ export default class UserService {
         username: { contains: username, mode: "insensitive" },
         id: { notIn: [userId, ...excludedUserIds] },
       },
+      orderBy: { username: "asc" },
       skip: (page - 1) * limit,
       take: limit,
       select: { id: true, username: true, isOnline: true },
     });
 
-    const totalUsers = await prisma.user.findMany({
+    const totalUsersCount = await prisma.user.count({
       where: {
         username: { contains: username, mode: "insensitive" },
         id: {
@@ -68,7 +69,7 @@ export default class UserService {
       },
     });
 
-    return { users, hasMore: page * limit < totalUsers.length };
+    return { users, hasMore: page * limit < totalUsersCount };
   }
 
   static async registration(data: RegistrationReq) {
@@ -108,5 +109,25 @@ export default class UserService {
       where: { id },
       data: { username },
     });
+  }
+
+  static async blockByIds(blockerId: string, blockedId: string) {
+    await prisma.blockedUser.create({ data: { blockerId, blockedId } });
+  }
+
+  static async unblockByIds(blockerId: string, blockedId: string) {
+    await prisma.blockedUser.delete({
+      where: { blockerId_blockedId: { blockerId, blockedId } },
+    });
+  }
+
+  static async isBlockedByIds(blockerId: string, blockedId: string) {
+    return await prisma.blockedUser.findUnique({
+      where: { blockerId_blockedId: { blockerId, blockedId } },
+    });
+  }
+
+  static async setOnlineStatus(id: string, isOnline: boolean) {
+    await prisma.user.update({ where: { id }, data: { isOnline } });
   }
 }

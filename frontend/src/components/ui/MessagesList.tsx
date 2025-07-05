@@ -8,7 +8,6 @@ import { Outlet, useParams, useNavigate } from 'react-router'
 import DialogContainer from './DialogContainer'
 import DropdownMenu, { DropdownMenuOption } from './DropdownMenu'
 import Loader from './Loader'
-import Message from './Message'
 import Modal from './Modal'
 
 import { useGetManyUsersByUsernameQuery, useGetChatsByUserIdQuery } from '../../api/chatApi'
@@ -87,7 +86,7 @@ const MessagesList: FC = () => {
 
   useEffect(() => {
     if (!isSuccessChatsQuery) return
-    setChats(chatsDataQuery)
+    setChats((prev) => [...(prev || []), ...chatsDataQuery])
   }, [isSuccessChatsQuery, chatsDataQuery])
 
   useEffect(() => {
@@ -107,12 +106,9 @@ const MessagesList: FC = () => {
     if (!searchIsSuccess) return
 
     setFoundUsers((prev) => {
-      const prevUsers = prev?.users ?? []
-      const newUsers = searchUsersData?.users ?? []
-
       return {
         hasMore: searchUsersData.hasMore,
-        users: [...prevUsers, ...newUsers],
+        users: [...(prev?.users ?? []), ...searchUsersData.users],
       }
     })
   }, [searchIsSuccess, searchUsersData])
@@ -175,10 +171,12 @@ const MessagesList: FC = () => {
         </div>
 
         {username ? (
-          <Outlet />
+          <Outlet key={username} />
         ) : (
-          <div className={dialogCl.layoutDiv}>
-            <Message className={messageCl.previewMessage} text={t('nonSelectedDialogText')} />
+          <div style={{ flexDirection: 'column-reverse' }} className={dialogCl.layoutDiv}>
+            <div className={`${messageCl.message} ${messageCl.previewMessage}`}>
+              <p>{t('nonSelectedDialogText')}</p>
+            </div>
           </div>
         )}
       </div>

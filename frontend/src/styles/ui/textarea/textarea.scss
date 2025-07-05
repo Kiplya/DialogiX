@@ -1,0 +1,40 @@
+@import '../../constants.scss';
+@import '../../mixins.scss';
+
+textarea {
+  @include scrollbar;
+
+  &::-webkit-scrollbar-track {
+    background: var(--scrollbar-hover-color);
+  }
+
+  &::-webkit-scrollbar-thumb {
+    border: 0.05rem solid var(--scrollbar-hover-color);
+    background-color: var(--input-background-color);
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: var(--input-background-color);
+  }
+
+  font-family: 'Roboto';
+  font-size: $font-size-medium;
+  color: var(--text-color);
+  resize: none;
+
+  width: 100%;
+  height: 100%;
+
+  background-color: var(--input-background-color);
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  border: 0.05rem solid var(--input-background-color);
+
+  &::placeholder {
+    color: var(--input-placeholder-color);
+  }
+
+  &:focus {
+    border-color: var(--input-border-color);
+  }
+}

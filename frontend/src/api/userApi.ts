@@ -158,6 +158,8 @@ export const userApi = createApi({
         method: 'GET',
         params: { username },
       }),
+
+      keepUnusedDataFor: 0,
     }),
   }),
 })

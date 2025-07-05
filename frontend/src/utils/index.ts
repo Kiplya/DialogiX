@@ -1,3 +1,4 @@
 import { io } from 'socket.io-client'
 
-export const socket = io(import.meta.env.VITE_API_URL, { autoConnect: false, withCredentials: true })
+const socketUrl = import.meta.env.MODE === 'development' ? import.meta.env.VITE_API_URL : '/'
+export const socket = io(socketUrl, { autoConnect: false, withCredentials: true })

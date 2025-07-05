@@ -18,21 +18,34 @@ model token {
 }
 
 model user {
-  id                String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  username          String        @unique
-  email             String        @unique
+  id                String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  username          String              @unique
+  email             String              @unique
   password          String        
 
-  registredAt       DateTime      @default(now()) @db.Timestamptz(0)
-  isAdmin           Boolean       @default(false)
-  isOnline          Boolean       @default(false)
+  registredAt       DateTime            @default(now()) @db.Timestamptz(0)
+  isAdmin           Boolean             @default(false)
+  isOnline          Boolean             @default(false)
 
   tokens            token[]
   chatParticipant   chatParticipant[]
+
+  blockedUsers      blockedUser[]       @relation("userBlockedUsers")
+  blockedByUsers    blockedUser[]       @relation("userBlockedBy") 
+}
+
+model blockedUser {
+  blockerId   String   @db.Uuid
+  blockedId   String   @db.Uuid
+
+  blocker     user     @relation("userBlockedUsers", fields: [blockerId], references: [id], onDelete: Cascade)
+  blocked     user     @relation("userBlockedBy", fields: [blockedId], references: [id], onDelete: Cascade)
+
+  @@id([blockerId, blockedId])
 }
 
 model chatParticipant {
-  chatId          String       @db.Uuid
+  chatId          String       @db.Text
   userId          String       @db.Uuid
 
   chat            chat         @relation(fields: [chatId], references: [id], onDelete: Cascade)
@@ -42,7 +55,7 @@ model chatParticipant {
 }
 
 model chat {
-  id                String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id                String              @id @unique @db.Text
   
   messages          message[]
   chatParticipants  chatParticipant[]    
@@ -53,7 +66,9 @@ model message {
   text          String        @db.Text
   createdAt     DateTime      @default(now()) @db.Timestamptz(0)
   userId        String        @db.Uuid
+  isReaded      Boolean       @default(false)
+  isEdited      Boolean       @default(false)
 
-  chatId        String        @db.Uuid
+  chatId        String        @db.Text
   chat          chat          @relation(fields: [chatId], references: [id], onDelete: Cascade)
 }

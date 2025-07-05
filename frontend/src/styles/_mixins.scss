@@ -9,3 +9,25 @@
   align-items: center;
   flex-direction: column;
 }
+
+@mixin scrollbar {
+  overflow-y: auto;
+
+  &::-webkit-scrollbar {
+    width: 0.5rem;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: var(--page-background-color);
+    border-radius: 0.25rem;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: var(--input-background-color);
+    border-radius: 0.25rem;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: var(--scrollbar-hover-color);
+  }
+}

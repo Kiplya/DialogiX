@@ -73,6 +73,7 @@ export default class TokenController {
 
       res.status(ResStatus.OK).json({
         message: "Access token refreshed",
+        userId: newPayload.userId,
         isAdmin: newPayload.isAdmin,
         accessToken,
       });

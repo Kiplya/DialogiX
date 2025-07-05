@@ -14,14 +14,14 @@ html {
   font-size: 1em;
 
   @media (max-width: 768px) {
-    font-size: 0.75em;
+    font-size: 0.85em;
   }
 
-  @media (min-width: 2560px) {
+  @media (min-width: 2460px) {
     font-size: 1.5em;
   }
 
-  @media (min-width: 3860px) {
+  @media (min-width: 3760px) {
     font-size: 2em;
   }
 }
@@ -61,7 +61,7 @@ ul {
 }
 
 .Toastify__toast {
-  font-size: var(--font-small);
+  font-size: $font-size-medium;
   font-family: 'Roboto';
   color: var(--text-color);
 
@@ -71,6 +71,7 @@ ul {
 
   background-color: var(--toastify-background-color);
   border-radius: 1rem;
+  border: 0.1rem solid var(--page-background-color);
 }
 
 .Toastify__close-button {

@@ -23,6 +23,7 @@ export type LoginReq = {
 };
 
 export type LoginRes = {
+  userId: string;
   accessToken: string;
   isAdmin: boolean;
 } & BaseRes;
@@ -79,4 +80,18 @@ export type GetUserByUsernameRes = {
   id: string;
   username: string;
   isOnline: boolean;
+  block: "false" | "blocker" | "blocked";
+};
+
+export type GetMessagesByChatIdRes = {
+  messages: {
+    text: string;
+    userId: string;
+    id: string;
+    isReaded: boolean;
+    isEdited: boolean;
+    createdAt: Date;
+  }[];
+
+  hasMore: boolean;
 };

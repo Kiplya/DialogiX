@@ -10,10 +10,9 @@
     border-right: var(--messages-list-border-color) 0.1rem solid;
 
     height: 100dvh;
-    width: 20dvw;
-    min-width: 20rem;
+    width: 25rem;
 
-    @media (max-width: #{2 * 20rem}) {
+    @media (max-width: #{2 * 25rem}) {
       width: 100dvw;
       border-right: revert;
 
@@ -40,35 +39,15 @@
 
     & > main {
       @include flexCenterColumn;
+      @include scrollbar;
 
-      & .loaderDiv {
-        padding-top: 1rem;
+      & > .loaderDiv {
+        padding: 1rem 0;
         width: 3rem;
       }
 
-      & .notFounded {
-        padding-top: 1rem;
-      }
-
-      border-top: var(--messages-list-border-color) 0.1rem solid;
-      overflow-y: auto;
-
-      &::-webkit-scrollbar {
-        width: 0.5rem;
-      }
-
-      &::-webkit-scrollbar-track {
-        background: var(--page-background-color);
-        border-radius: 0.25rem;
-      }
-
-      &::-webkit-scrollbar-thumb {
-        background-color: var(--input-background-color);
-        border-radius: 0.25rem;
-      }
-
-      &::-webkit-scrollbar-thumb:hover {
-        background: var(--scrollbar-hover-color);
+      & > .notFounded {
+        padding: 1rem 0;
       }
     }
   }

@@ -13,7 +13,12 @@
   & > div {
     background-color: var(--page-background-color);
     padding: 1.5rem;
+    margin: 3rem;
     border-radius: 2rem;
+
+    & > p {
+      text-align: center;
+    }
 
     & > div {
       display: flex;

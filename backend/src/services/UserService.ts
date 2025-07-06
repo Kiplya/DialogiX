@@ -6,6 +6,7 @@ export default class UserService {
     return await prisma.user.findUnique({
       where: { id },
       select: {
+        isOnline: true,
         id: true,
         email: true,
         username: true,

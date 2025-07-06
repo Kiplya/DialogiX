@@ -1,7 +1,7 @@
 import { ReactElement } from 'react'
 
 import Dialog from '../components/ui/Dialog'
-import MessagesList from '../components/ui/MessagesList'
+import DialogsList from '../components/ui/DialogsList'
 import AuthorizationPage from '../pages/AuthorizationPage'
 import ProfilePage from '../pages/ProfilePage'
 import RegistrationPage from '../pages/RegistrationPage'
@@ -20,7 +20,7 @@ export const publicRoutes: AppRoute[] = [
 export const privateRoutes: AppRoute[] = [
   {
     path: '/messages',
-    element: <MessagesList />,
+    element: <DialogsList />,
     children: [
       {
         path: ':username',

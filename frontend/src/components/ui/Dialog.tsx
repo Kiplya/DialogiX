@@ -1,5 +1,5 @@
 import EmojiPicker, { EmojiStyle, Theme } from 'emoji-picker-react'
-import { Fragment, FC, useEffect, useMemo, useRef, useState, useCallback } from 'react'
+import { Fragment, FC, useEffect, useMemo, useRef, useState } from 'react'
 
 import { useTranslation } from 'react-i18next'
 import { useInView } from 'react-intersection-observer'
@@ -41,6 +41,21 @@ const cleanText = (input: string) => {
   }
 
   return cleanedLines.join('\n').trim()
+}
+
+const linkify = (text: string) => {
+  const urlRegex = /(https?:\/\/[^\s]+)/g
+
+  return text.split(urlRegex).map((part, index) => {
+    if (urlRegex.test(part)) {
+      return (
+        <a key={index} href={part} target='_blank' rel='noopener noreferrer'>
+          {part}
+        </a>
+      )
+    }
+    return part
+  })
 }
 
 const isDifferentDate = (date1: Date, date2: Date) => {
@@ -170,6 +185,7 @@ const Dialog: FC = () => {
         onClick: ({ messageText, messageId }: { messageText: string; messageId: string }) => {
           setMessageText(messageText)
           setEditMessageId(messageId)
+          textareaRef.current?.focus()
         },
       },
       {
@@ -190,7 +206,7 @@ const Dialog: FC = () => {
     isOpen: false,
   })
 
-  const adjustFooterHeight = useCallback(() => {
+  useEffect(() => {
     if (!footerRef.current || !textareaRef.current) return
 
     footerRef.current.style.height = ''
@@ -202,11 +218,7 @@ const Dialog: FC = () => {
     } else if (parseFloat(footerRef.current.style.height) < 5 * remInPx) {
       footerRef.current.style.height = 5 * remInPx + 'px'
     }
-  }, [])
-
-  useEffect(() => {
-    adjustFooterHeight()
-  }, [adjustFooterHeight, editMessageId])
+  }, [messageText])
 
   useEffect(() => {
     if (!user) return
@@ -402,7 +414,7 @@ const Dialog: FC = () => {
                           </div>
                         )}
 
-                        <p>{message.text}</p>
+                        <p>{linkify(message.text)}</p>
 
                         <div className={messageCl.infoDiv}>
                           {message.isEdited && (
@@ -454,7 +466,6 @@ const Dialog: FC = () => {
                 onChange={(event) => {
                   setMessageText(event.currentTarget.value)
                 }}
-                onInput={adjustFooterHeight}
                 onKeyDown={(event) => {
                   if (event.key === 'Enter' && !event.shiftKey) {
                     event.preventDefault()

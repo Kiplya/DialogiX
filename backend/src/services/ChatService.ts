@@ -3,6 +3,36 @@ import { encrypt, decrypt } from "../utils/crypt";
 import { getChatIdByUsersId } from "../utils/index";
 
 export default class ChatService {
+  static async hasUnreadedMessagesBySelf(userId: string, chatId: string) {
+    const unreadedMessages = await prisma.message.count({
+      where: { chatId, userId: { not: userId }, isReaded: false },
+    });
+
+    return unreadedMessages ? true : false;
+  }
+
+  static async hasUnreadedMessagesByRecepient(userId: string, chatId: string) {
+    const unreadedMessages = await prisma.message.count({
+      where: { chatId, userId, isReaded: false },
+    });
+
+    return unreadedMessages ? true : false;
+  }
+
+  static async getLastMessageByChatId(chatId: string) {
+    const message = await prisma.message.findFirst({
+      where: { chatId },
+      orderBy: { createdAt: "desc" },
+      select: { text: true, createdAt: true, userId: true, id: true },
+    });
+
+    if (!message) {
+      throw new Error("No message found");
+    }
+
+    return { ...message, text: decrypt(message.text) };
+  }
+
   static async getChatsByUserId(userId: string) {
     const chats = await prisma.chatParticipant.findMany({
       where: { userId },
@@ -11,6 +41,7 @@ export default class ChatService {
           include: {
             messages: {
               select: {
+                userId: true,
                 createdAt: true,
                 text: true,
               },
@@ -34,25 +65,38 @@ export default class ChatService {
       },
     });
 
-    return chats
-      .map((chat) => {
+    const chatInfos = await Promise.all(
+      chats.map(async (chat) => {
         let lastMessage = "";
         if (chat.chat.messages[0].text) {
           lastMessage = decrypt(chat.chat.messages[0].text);
         }
 
+        const isNotReadedBySelf = await this.hasUnreadedMessagesBySelf(
+          userId,
+          chat.chatId
+        );
+        const isNotReadedByRecepient =
+          await this.hasUnreadedMessagesByRecepient(userId, chat.chatId);
+
         return {
           userId: chat.chat.chatParticipants[0].user.id,
           username: chat.chat.chatParticipants[0].user.username,
           lastMessage,
+          isNotReadedBySelf,
+          isNotReadedByRecepient,
+          lastSenderId: chat.chat.messages[0].userId,
           isOnline: chat.chat.chatParticipants[0].user.isOnline,
           createdAt: chat.chat.messages[0].createdAt,
+          chatId: chat.chatId,
         };
       })
-      .sort(
-        (a, b) =>
-          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-      );
+    );
+
+    return chatInfos.sort(
+      (a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
   }
 
   static async setIsReadedMessagesByChatIdAndRecepientId(

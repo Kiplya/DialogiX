@@ -1,4 +1,4 @@
-import { GetManyUsersRes } from '@shared/index'
+import { GetManyUsersRes, GetChatsByUserIdRes } from '@shared/index'
 import i18n from 'i18next'
 import { FC, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -12,15 +12,19 @@ import Modal from './Modal'
 
 import { useGetManyUsersByUsernameQuery, useGetChatsByUserIdQuery } from '../../api/chatApi'
 import { useLogoutMutation } from '../../api/userApi'
+import useAppSelector from '../../hooks/useAppSelector'
 import useDebounce from '../../hooks/useDebounce'
 import dialogCl from '../../styles/ui/dialog/dialog.module.css'
+import cl from '../../styles/ui/dialogsList/dialogsList.module.css'
 import messageCl from '../../styles/ui/message/message.module.css'
-import cl from '../../styles/ui/messagesList/messagesList.module.css'
+import { socket } from '../../utils'
 
-const MessagesList: FC = () => {
+const DialogsList: FC = () => {
   const { t } = useTranslation('msg')
   const navigate = useNavigate()
   const { username } = useParams()
+  const userId = useAppSelector((state) => state.authSlice.userId)
+
   const [logoutMutation, { isLoading: isLoadingLogout }] = useLogoutMutation()
   const [isShowModal, setIsShowModal] = useState(false)
 
@@ -121,6 +125,58 @@ const MessagesList: FC = () => {
     setPage(1)
   }, [searchIsError])
 
+  useEffect(() => {
+    const userOnlineHandler = (id: string) => {
+      setChats((prev) => prev?.map((chat) => (chat.userId === id ? { ...chat, isOnline: true } : chat)))
+    }
+
+    const userOfflineHandler = (id: string) => {
+      setChats((prev) => prev?.map((chat) => (chat.userId === id ? { ...chat, isOnline: false } : chat)))
+    }
+
+    const deleteChatHandler = (chatId: string) => {
+      setChats((prev) => prev?.filter((chat) => chat.chatId !== chatId))
+    }
+
+    const joinChatHandler = (chatInfo: GetChatsByUserIdRes[number]) => {
+      setChats((prev) => prev?.map((chat) => (chat.chatId === chatInfo.chatId ? chatInfo : chat)))
+    }
+
+    const receiveMessageHandler = (chatInfo: GetChatsByUserIdRes[number]) => {
+      setChats((prev) => [chatInfo, ...(prev?.filter((chat) => chat.chatId !== chatInfo.chatId) || [])])
+    }
+
+    const editMessageHandler = (chatInfo: GetChatsByUserIdRes[number]) => {
+      setChats((prev) => prev?.map((chat) => (chat.chatId === chatInfo.chatId ? chatInfo : chat)))
+    }
+
+    const deleteMessageHandler = (chatInfo: GetChatsByUserIdRes[number]) => {
+      setChats((prev) =>
+        [chatInfo, ...(prev?.filter((chat) => chat.chatId !== chatInfo.chatId) || [])].sort(
+          (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+        ),
+      )
+    }
+
+    socket.on('user_online', userOnlineHandler)
+    socket.on('user_offline', userOfflineHandler)
+    socket.on('dialogs_delete_chat', deleteChatHandler)
+    socket.on('dialogs_join_chat', joinChatHandler)
+    socket.on('dialogs_receive_message', receiveMessageHandler)
+    socket.on('dialogs_edit_message', editMessageHandler)
+    socket.on('dialogs_delete_message', deleteMessageHandler)
+
+    return () => {
+      socket.off('user_online', userOnlineHandler)
+      socket.off('user_offline', userOfflineHandler)
+      socket.off('dialogs_delete_chat', deleteChatHandler)
+      socket.off('dialogs_join_chat', joinChatHandler)
+      socket.off('dialogs_receive_message', receiveMessageHandler)
+      socket.off('dialogs_edit_message', editMessageHandler)
+      socket.off('dialogs_delete_message', deleteMessageHandler)
+    }
+  }, [])
+
   return (
     <>
       <div className={cl.pageDiv}>
@@ -166,7 +222,22 @@ const MessagesList: FC = () => {
               <span className={cl.notFounded}>{t('notFounedDialogsText')}</span>
             )}
 
-            {!debouncedUsername && chats && chats.length > 0}
+            {!debouncedUsername &&
+              chats &&
+              chats.length > 0 &&
+              chats.map((chat) => (
+                <DialogContainer
+                  key={chat.userId}
+                  userId={chat.userId}
+                  username={chat.username}
+                  isOnline={chat.isOnline}
+                  lastMessage={chat.lastMessage}
+                  isSelfLastSender={chat.lastSenderId === userId}
+                  lastMessageTime={chat.createdAt}
+                  isNotReadedBySelf={chat.isNotReadedBySelf}
+                  isNotReadedByRecepient={chat.isNotReadedByRecepient}
+                />
+              ))}
           </main>
         </div>
 
@@ -193,4 +264,4 @@ const MessagesList: FC = () => {
   )
 }
 
-export default MessagesList
+export default DialogsList

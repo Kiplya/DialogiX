@@ -73,7 +73,11 @@ export type GetChatsByUserIdRes = {
   userId: string;
   isOnline: boolean;
   lastMessage: string;
+  lastSenderId: string;
+  isNotReadedBySelf: boolean;
+  isNotReadedByRecepient: boolean;
   createdAt: Date;
+  chatId: string;
 }[];
 
 export type GetUserByUsernameRes = {

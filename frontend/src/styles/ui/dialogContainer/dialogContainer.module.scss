@@ -1,7 +1,10 @@
+@import '../../constants.scss';
+
 .dialogDiv {
   display: flex;
   align-items: center;
   gap: 1rem;
+  user-select: none;
 
   width: 100%;
   padding: 1rem;
@@ -20,14 +23,59 @@
     justify-content: space-between;
 
     height: 100%;
-    width: 13rem;
+    width: 18rem;
     padding: 0.5rem 0;
 
-    & > .lastMessage {
+    @media (max-width: #{2 * 25rem}) {
+      width: calc(100dvw - 7rem);
+    }
+
+    & > :first-child,
+    & > :last-child > :first-child {
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
     }
+
+    & > :last-child {
+      display: flex;
+      align-items: center;
+      justify-content: right;
+      gap: 1rem;
+
+      & > :first-child {
+        margin-right: auto;
+      }
+
+      & > .notReadedBySelf {
+        width: 1rem;
+        aspect-ratio: 1/1;
+        flex: none;
+
+        border-radius: 50%;
+        background-color: var(--online-indicator-color);
+      }
+
+      & > .notReadedByRecepient {
+        flex: none;
+        color: var(--info-message-color);
+      }
+
+      & > .readedByRecepient {
+        flex: none;
+        color: var(--online-indicator-color);
+      }
+
+      & > .messageTime {
+        color: var(--info-message-color);
+        font-size: $font-size-small;
+        text-align: center;
+      }
+    }
+  }
+
+  &.selected {
+    background-color: var(--dialog-container-hovered-background-color);
   }
 
   @media (hover: hover) {

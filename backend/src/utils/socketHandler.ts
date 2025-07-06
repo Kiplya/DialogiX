@@ -5,6 +5,26 @@ import { getChatIdByUsersId } from "./index";
 import UserService from "../services/UserService";
 import ChatService from "../services/ChatService";
 
+const getChatInfo = async (chatId: string, userId: string) => {
+  const lastMessage = await ChatService.getLastMessageByChatId(chatId);
+
+  const hasUnreadedMessagesBySelf = await ChatService.hasUnreadedMessagesBySelf(
+    userId,
+    chatId
+  );
+
+  const hasUnreadedMessagesByRecepient =
+    await ChatService.hasUnreadedMessagesByRecepient(userId, chatId);
+
+  return {
+    lastMessage: lastMessage.text,
+    isNotReadedBySelf: hasUnreadedMessagesBySelf,
+    isNotReadedByRecepient: hasUnreadedMessagesByRecepient,
+    lastSenderId: lastMessage.userId,
+    createdAt: lastMessage.createdAt,
+  };
+};
+
 const authCheck = (socket: Socket, controller: string, args?: any[]) => {
   if (!socket.data.isAuth) {
     socket.emit("unauthorized", {
@@ -14,6 +34,39 @@ const authCheck = (socket: Socket, controller: string, args?: any[]) => {
 
     throw new Error("Unauthorized");
   }
+};
+
+const sendChatInfo = async (
+  io: Server,
+  listener: string,
+  chatId: string,
+  userId: string,
+  recepientId: string
+) => {
+  const selfInfo = await UserService.getById(userId);
+  if (!selfInfo) return;
+
+  const recepientInfo = await UserService.getById(recepientId);
+  if (!recepientInfo) return;
+
+  const senderChatInfo = await getChatInfo(chatId, userId);
+  const recepientChatInfo = await getChatInfo(chatId, recepientId);
+
+  io.to(`user_${userId}`).emit(listener, {
+    ...senderChatInfo,
+    userId: recepientInfo.id,
+    username: recepientInfo.username,
+    isOnline: recepientInfo.isOnline,
+    chatId: chatId,
+  });
+
+  io.to(`user_${recepientId}`).emit(listener, {
+    ...recepientChatInfo,
+    userId: selfInfo.id,
+    username: selfInfo.username,
+    isOnline: selfInfo.isOnline,
+    chatId: chatId,
+  });
 };
 
 const socketHandler = (io: Server) => {
@@ -103,9 +156,16 @@ const socketHandler = (io: Server) => {
             recepientId
           );
 
-        if (messagesIds.length) {
-          io.to(`chat_${chat.id}`).emit("join_chat", messagesIds);
-        }
+        if (!messagesIds.length) return;
+
+        io.to(`chat_${chat.id}`).emit("join_chat", messagesIds);
+        await sendChatInfo(
+          io,
+          "dialogs_join_chat",
+          chat.id,
+          socket.data.userId,
+          recepientId
+        );
       } catch {}
     });
 
@@ -134,6 +194,11 @@ const socketHandler = (io: Server) => {
         await ChatService.deleteChatById(chat.id);
 
         io.to(`chat_${chat.id}`).emit("delete_chat");
+
+        io.to([`user_${recepientId}`, `user_${socket.data.userId}`]).emit(
+          "dialogs_delete_chat",
+          chat.id
+        );
       } catch {}
     });
 
@@ -146,10 +211,10 @@ const socketHandler = (io: Server) => {
         );
         let chatId = chat?.id;
 
-        if (!chat) {
-          const recepient = await UserService.getById(recepientId);
-          if (!recepient) return;
+        const recepient = await UserService.getById(recepientId);
+        if (!recepient) return;
 
+        if (!chat) {
           const newChat = await ChatService.createChat(
             socket.data.userId,
             recepientId
@@ -170,6 +235,13 @@ const socketHandler = (io: Server) => {
         }
 
         io.to(`chat_${chatId}`).emit("receive_message", message);
+        await sendChatInfo(
+          io,
+          "dialogs_receive_message",
+          chatId!,
+          socket.data.userId,
+          recepientId
+        );
       } catch {}
     });
 
@@ -184,8 +256,30 @@ const socketHandler = (io: Server) => {
           );
           if (!chat) return;
 
+          const lastMessage = await ChatService.getLastMessageByChatId(chat.id);
           await ChatService.deleteMessageById(messageId);
+
+          const isChatExist = await ChatService.isChatExist(
+            getChatIdByUsersId(recepientId, socket.data.userId)
+          );
+
+          if (!isChatExist) {
+            io.to([`user_${recepientId}`, `user_${socket.data.userId}`]).emit(
+              "dialogs_delete_chat",
+              chat.id
+            );
+          }
+
           io.to(`chat_${chat.id}`).emit("delete_message", messageId);
+
+          if (lastMessage.id !== messageId) return;
+          await sendChatInfo(
+            io,
+            "dialogs_delete_message",
+            chat.id,
+            socket.data.userId,
+            recepientId
+          );
         } catch {}
       }
     );
@@ -232,6 +326,13 @@ const socketHandler = (io: Server) => {
         }
 
         io.to(`chat_${chat.id}`).emit("edit_message", message);
+        await sendChatInfo(
+          io,
+          "dialogs_edit_message",
+          chat.id,
+          socket.data.userId,
+          recepientId
+        );
       } catch {}
     });
   });

@@ -467,7 +467,7 @@ const Dialog: FC = () => {
                   setMessageText(event.currentTarget.value)
                 }}
                 onKeyDown={(event) => {
-                  if (event.key === 'Enter' && !event.shiftKey) {
+                  if (event.key === 'Enter' && event.shiftKey) {
                     event.preventDefault()
                     sendMessageFn()
                   }

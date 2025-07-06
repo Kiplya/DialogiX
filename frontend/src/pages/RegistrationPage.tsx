@@ -27,10 +27,13 @@ const RegistrationPage: FC = () => {
     refetchOnMountOrArgChange: true,
   })
 
-  const { isError: isErrorEmail, isFetching: isFetchingEmail } = useEmailExistQuery(debouncedEmail!, {
-    skip: !debouncedEmail || !validator.isEmail(debouncedEmail),
-    refetchOnMountOrArgChange: true,
-  })
+  const { isError: isErrorEmail, isFetching: isFetchingEmail } = useEmailExistQuery(
+    debouncedEmail?.toLowerCase() || '',
+    {
+      skip: !debouncedEmail || !validator.isEmail(debouncedEmail),
+      refetchOnMountOrArgChange: true,
+    },
+  )
 
   const [isValidEmail, setIsValidEmail] = useState(true)
   const [isValidUsername, setIsValidUsername] = useState(true)
@@ -90,7 +93,7 @@ const RegistrationPage: FC = () => {
         <form
           onSubmit={(event) => {
             event.preventDefault()
-            registrationMutation({ email, username, password })
+            registrationMutation({ email: email.toLowerCase(), username, password })
           }}
         >
           <p>{t('regText')}</p>

@@ -51,7 +51,7 @@ const AuthorizationPage: FC = () => {
         <form
           onSubmit={(event) => {
             event.preventDefault()
-            loginMutation({ email, password })
+            loginMutation({ email: email.toLowerCase(), password })
           }}
         >
           <p>{t('authText')}</p>

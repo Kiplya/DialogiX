@@ -84,7 +84,7 @@ const DialogsList: FC = () => {
     data: chatsDataQuery,
     isFetching: isFetchingChatsQuery,
     isSuccess: isSuccessChatsQuery,
-  } = useGetChatsByUserIdQuery()
+  } = useGetChatsByUserIdQuery(undefined, { refetchOnMountOrArgChange: true })
 
   const [chats, setChats] = useState<typeof chatsDataQuery>()
 

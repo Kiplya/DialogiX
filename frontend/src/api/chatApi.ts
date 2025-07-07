@@ -15,6 +15,8 @@ export const chatApi = createApi({
         method: 'GET',
         params: credentials,
       }),
+
+      keepUnusedDataFor: 0,
     }),
 
     getChatsByUserId: builder.query<GetChatsByUserIdRes, void>({
@@ -22,6 +24,8 @@ export const chatApi = createApi({
         url: '/chat/getChatsByUserId',
         method: 'GET',
       }),
+
+      keepUnusedDataFor: 0,
     }),
 
     getMessagesByUsers: builder.query<GetMessagesByChatIdRes, { recepientId: string; page: number; limit: number }>({

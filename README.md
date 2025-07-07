@@ -53,6 +53,8 @@ You will need to create a **login** and **password** for the database.
 You will need to create `ACCESS_TOKEN_SECRET` and `REFRESH_TOKEN_SECRET` — they can be any random strings.  
 And after that rename **.env.example** to **.env**  
   
+You will need to compile **.scss** into **.css**
+  
 **Command to rebuild from root directory:**  
 `docker-compose down; docker volume rm dialogix_frontend_build; docker-compose up --build`  
 
@@ -61,7 +63,9 @@ And after that rename **.env.example** to **.env**
 Также нужно создать **логин** и **пароль** для базы данных.  
 Необходимо создать `ACCESS_TOKEN_SECRET` и `REFRESH_TOKEN_SECRET` — это могут быть любые случайные строки.  
 После этого переименуйте **.env.example** в **.env**
-
+  
+Также нужно скомпилировать **.scss** в **.css**
+  
 **Команда для пересборки из корневой директории проекта:**  
 `docker-compose down; docker volume rm dialogix_frontend_build; docker-compose up --build`  
 

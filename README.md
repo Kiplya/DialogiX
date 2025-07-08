@@ -76,25 +76,25 @@ You will need to compile **.scss** into **.css**
 ### Login page
 ![Login page](./readme/desk-login.jpg)
   
-### Dialogs list page
-![Dialogs list page](./readme/desk-messages.jpg)
+### Main page
+![Main page](./readme/desk-messages.jpg)
   
 ### Profile page
 ![Profile page](./readme/desk-profile.jpg)
   
-### Dialog page
-![Dialog page](./readme/desk-dialog.jpg)
+### Chat page
+![Chat page](./readme/desk-dialog.jpg)
 
 ## Mobile  
 
 ### Login page
 ![Login page](./readme/mobile-login.jpg)
   
-### Dialogs list page
-![Dialogs list page](./readme/mobile-messages.jpg)
+### Main page
+![Main page](./readme/mobile-messages.jpg)
   
 ### Profile page
 ![Profile page](./readme/mobile-profile.jpg)
   
-### Dialog page
-![Dialog page](./readme/mobile-dialog.jpg)
+### Chat page
+![Chat page](./readme/mobile-dialog.jpg)

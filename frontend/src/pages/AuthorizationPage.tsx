@@ -60,7 +60,7 @@ const AuthorizationPage: FC = () => {
             <div>
               <input
                 className={!isValidEmail ? cl.invalidInput : ''}
-                type='text'
+                type='email'
                 placeholder='Email'
                 value={email}
                 onChange={(event) => {

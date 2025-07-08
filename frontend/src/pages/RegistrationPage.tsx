@@ -102,7 +102,7 @@ const RegistrationPage: FC = () => {
             <div>
               <input
                 className={!isValidEmail || isEmailExist ? cl.invalidInput : ''}
-                type='text'
+                type='email'
                 placeholder='Email'
                 value={email}
                 onChange={(event) => {
